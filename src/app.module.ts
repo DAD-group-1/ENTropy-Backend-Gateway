@@ -9,12 +9,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [
-        '.env.production',
-        '.env.testing',
-        '.env.development',
-        '.env.development.local',
-      ],
+      envFilePath: ['.env'],
     }),
     UsersModule,
   ],
