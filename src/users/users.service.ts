@@ -30,10 +30,10 @@ export class UsersService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto): Observable<User> {
-    return this.usersClient.send<User, { id: string } & UpdateUserDto>(
-      { cmd: 'update_user' },
-      { id, ...updateUserDto },
-    );
+    return this.usersClient.send<
+      User,
+      { id: string; updateUserDto: UpdateUserDto }
+    >({ cmd: 'update_user' }, { id, updateUserDto });
   }
 
   remove(id: string): Observable<User> {
