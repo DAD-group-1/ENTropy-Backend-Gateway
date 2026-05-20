@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
 import { StudentModule } from './users/students/student.module';
+import { InstructorModule } from './users/instructors/instructor.module';
 
 @Module({
   imports: [
@@ -11,8 +11,8 @@ import { StudentModule } from './users/students/student.module';
       isGlobal: true,
       envFilePath: ['.env'],
     }),
-    UsersModule,
     StudentModule,
+    InstructorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
