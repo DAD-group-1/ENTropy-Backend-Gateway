@@ -1,18 +1,30 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Observable } from 'rxjs';
-import { CreateStudentDto } from './interfaces/dtos/create-student.dto';
 import { Student } from './interfaces/student.interface';
+import { TransformInterceptor } from '../../common/transform-interceptor';
+import {
+  CreateStudentDto,
+  UpdateStudentDto,
+} from './interfaces/dtos/student.dto';
 
 @Controller('students')
+@UseInterceptors(TransformInterceptor)
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 
   @Post()
-  create(
-    @Body() createStudentDto: CreateStudentDto,
-  ): Observable<Student> {
-    return this.studentService.createStudent(createStudentDto);
+  create(@Body() createStudentDto: CreateStudentDto): Observable<Student> {
+    return this.studentService.create(createStudentDto);
   }
 
   @Get()
@@ -21,20 +33,20 @@ export class StudentController {
   }
 
   @Get(':id')
-  findOne(@Body('id') id: number): Observable<Student> {
+  findOne(@Param('id') id: string): Observable<Student> {
     return this.studentService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Body('id') id: number,
-    @Body() updateStudentDto: Partial<CreateStudentDto>,
+    @Param('id') id: string,
+    @Body() updateStudentDto: UpdateStudentDto,
   ): Observable<Student> {
     return this.studentService.update(id, updateStudentDto);
   }
 
   @Delete(':id')
-  remove(@Body('id') id: number): Observable<void> {
+  remove(@Param('id') id: string): Observable<void> {
     return this.studentService.remove(id);
   }
 }
