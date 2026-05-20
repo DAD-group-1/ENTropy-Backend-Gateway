@@ -1,4 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+import { catchError, EMPTY, OperatorFunction } from 'rxjs';
+import { MicroserviceRpcException } from './interfaces/error.interface';
 
 /**
  * Checks if the given value can be converted to a number. If not, throws an HttpException with the provided error message.
@@ -36,5 +38,17 @@ export function throwHttpError(
 ): void {
   throw new HttpException(error, status, {
     cause: new Error(error),
+  });
+}
+
+/**
+ * RxJS operator that catches MicroserviceRpcExceptions and rethrows them as HttpExceptions with the appropriate status code and message.
+ * @returns An RxJS operator function that can be used in an Observable pipeline to catch and handle MicroserviceRpcExceptions
+ * @throws HttpException with the message and status code from the caught MicroserviceRpcException
+ */
+export function catchRpcException<T>(): OperatorFunction<T, T> {
+  return catchError((error: MicroserviceRpcException) => {
+    throwHttpError(error.message, error.code);
+    return EMPTY;
   });
 }
