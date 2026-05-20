@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
-import { CreateInstructorDto } from './interfaces/dtos/create-instructor.dto';
+import { CreateInstructorDto } from './interfaces/dtos/instructor.dto';
 import { Observable } from 'rxjs';
 import { Instructor } from './interfaces/instructor.interface';
 
@@ -21,13 +21,13 @@ export class InstructorController {
   }
 
   @Get(':id')
-  findOne(@Body('id') id: number): Observable<Instructor> {
+  findOne(@Body('id') id: string): Observable<Instructor> {
     return this.instructorService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Body('id') id: number,
+    @Body('id') id: string,
     @Body() updateInstructorDto: Partial<CreateInstructorDto>,
   ): Observable<Instructor> {
     return this.instructorService.update(id, updateInstructorDto);

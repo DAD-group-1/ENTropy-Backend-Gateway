@@ -3,7 +3,11 @@ import { catchError, EMPTY, Observable } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { Student } from './interfaces/student.interface';
 import { usersServiceClientModuleName } from '../../common/client-modules';
-import { assertObjectIsNumber, throwHttpError } from '../../common/check-utils';
+import {
+  assertObjectIsNumber,
+  catchRpcException,
+  throwHttpError,
+} from '../../common/check-utils';
 import { MicroserviceRpcException } from '../../common/interfaces/error.interface';
 import {
   CreateStudentDto,
@@ -36,12 +40,7 @@ export class StudentService {
 
     return this.usersClient
       .send<Student, number>({ cmd: 'find_one_student' }, Number(id))
-      .pipe(
-        catchError((error: MicroserviceRpcException) => {
-          throwHttpError(error.message, error.code);
-          return EMPTY;
-        }),
-      );
+      .pipe(catchRpcException<Student>());
   }
 
   update(
@@ -53,25 +52,15 @@ export class StudentService {
     return this.usersClient
       .send<
         Student,
-        { id: number; updateStudentDto: UpdateStudentDto }
-      >({ cmd: 'update_student' }, { id: Number(id), updateStudentDto: updateData })
-      .pipe(
-        catchError((error: MicroserviceRpcException) => {
-          throwHttpError(error.message, error.code);
-          return EMPTY;
-        }),
-      );
+        { id: number; updateData: UpdateStudentDto }
+      >({ cmd: 'update_student' }, { id: Number(id), updateData: updateData })
+      .pipe(catchRpcException<Student>());
   }
 
   remove(id: string): Observable<void> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     return this.usersClient
       .send<void, number>({ cmd: 'remove_student' }, Number(id))
-      .pipe(
-        catchError((error: MicroserviceRpcException) => {
-          throwHttpError(error.message, error.code);
-          return EMPTY;
-        }),
-      );
+      .pipe(catchRpcException<void>());
   }
 }
