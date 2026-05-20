@@ -1,17 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { UsersService } from './users.service'; // Import the User interface from your service
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './interfaces/user.interface';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './users/interfaces/dtos/create-user.dto';
+import { User } from './users/interfaces/user.interface';
+import { UpdateUserDto } from './users/interfaces/dtos/update-user.dto'; // Import the User interface from your service
 
 @Controller('users')
 export class UsersController {

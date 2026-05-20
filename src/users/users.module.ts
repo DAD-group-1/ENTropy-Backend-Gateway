@@ -4,7 +4,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
-const usersClientModule = ClientsModule.registerAsync([
+export const usersClientModule = ClientsModule.registerAsync([
   {
     name: 'USERS_SERVICE',
     imports: [ConfigModule],
@@ -23,6 +23,6 @@ const usersClientModule = ClientsModule.registerAsync([
   imports: [usersClientModule],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [usersClientModule], // This makes USERS_SERVICE available to any module that imports UsersModule
+  exports: [usersClientModule], // This makes USERS_SERVICE available to any module that imports UserModule
 })
 export class UsersModule {}

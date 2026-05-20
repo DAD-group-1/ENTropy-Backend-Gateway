@@ -1,9 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './interfaces/user.interface';
+import { User } from './users/interfaces/user.interface';
+import { CreateUserDto } from './users/interfaces/dtos/create-user.dto';
+import { UpdateUserDto } from './users/interfaces/dtos/update-user.dto';
+import { assertObjectIsNumber } from '../common/check-utils';
 
 @Injectable()
 export class UsersService {
@@ -26,17 +27,26 @@ export class UsersService {
   }
 
   findOne(id: string): Observable<User> {
-    return this.usersClient.send<User, string>({ cmd: 'find_one_user' }, id);
+    assertObjectIsNumber(id);
+    return this.usersClient.send<User, number>(
+      { cmd: 'find_one_user' },
+      Number(id),
+    );
   }
 
   update(id: string, updateUserDto: UpdateUserDto): Observable<User> {
+    assertObjectIsNumber(id);
     return this.usersClient.send<
       User,
-      { id: string; updateUserDto: UpdateUserDto }
-    >({ cmd: 'update_user' }, { id, updateUserDto });
+      { id: number; updateUserDto: UpdateUserDto }
+    >({ cmd: 'update_user' }, { id: Number(id), updateUserDto });
   }
 
   remove(id: string): Observable<User> {
-    return this.usersClient.send<User, string>({ cmd: 'remove_user' }, id);
+    assertObjectIsNumber(id);
+    return this.usersClient.send<User, number>(
+      { cmd: 'remove_user' },
+      Number(id),
+    );
   }
 }
