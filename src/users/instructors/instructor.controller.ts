@@ -1,6 +1,17 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { InstructorService } from './instructor.service';
-import { CreateInstructorDto } from './interfaces/dtos/instructor.dto';
+import {
+  CreateInstructorDto,
+  UpdateInstructorDto,
+} from './interfaces/dtos/instructor.dto';
 import { Observable } from 'rxjs';
 import { Instructor } from './interfaces/instructor.interface';
 
@@ -21,20 +32,20 @@ export class InstructorController {
   }
 
   @Get(':id')
-  findOne(@Body('id') id: string): Observable<Instructor> {
+  findOne(@Param('id') id: string): Observable<Instructor> {
     return this.instructorService.findOne(id);
   }
 
   @Patch(':id')
   update(
-    @Body('id') id: string,
-    @Body() updateInstructorDto: Partial<CreateInstructorDto>,
+    @Param('id') id: string,
+    @Body() updateInstructorDto: UpdateInstructorDto,
   ): Observable<Instructor> {
     return this.instructorService.update(id, updateInstructorDto);
   }
 
   @Delete(':id')
-  remove(@Body('id') id: number): Observable<void> {
+  remove(@Param('id') id: number): Observable<void> {
     return this.instructorService.remove(id);
   }
 }
