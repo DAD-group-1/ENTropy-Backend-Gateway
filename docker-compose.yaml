@@ -1,0 +1,13 @@
+services:
+  entropy-backend-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: entropy_backend_gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+
+volumes:
+  mysql_data:

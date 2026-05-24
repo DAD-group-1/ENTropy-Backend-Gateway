@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { JwtStrategy } from './users/strategies/jwt.strategy';
+import { StudentModule } from './users/students/student.module';
+import { InstructorModule } from './users/instructors/instructor.module';
 
 @Module({
   imports: [
@@ -11,9 +11,10 @@ import { JwtStrategy } from './users/strategies/jwt.strategy';
       isGlobal: true,
       envFilePath: ['.env'],
     }),
-    UsersModule,
+    StudentModule,
+    InstructorModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtStrategy],
+  providers: [AppService],
 })
 export class AppModule {}
