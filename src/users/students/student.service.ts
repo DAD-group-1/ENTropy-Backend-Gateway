@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { catchError, EMPTY, Observable } from 'rxjs';
+import { catchError, EMPTY, firstValueFrom, Observable } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import { Student } from './interfaces/student.interface';
 import { usersServiceClientModuleName } from '../../common/client-modules';
@@ -13,6 +13,8 @@ import {
   CreateStudentDto,
   UpdateStudentDto,
 } from './interfaces/dtos/student.dto';
+import type { RegisterStudentRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.request.dto';
+import type { RegisterStudentResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.response.dto';
 
 @Injectable()
 export class StudentService {
@@ -43,10 +45,7 @@ export class StudentService {
       .pipe(catchRpcException<Student>());
   }
 
-  update(
-    id: string,
-    updateData: UpdateStudentDto,
-  ): Observable<Student> {
+  update(id: string, updateData: UpdateStudentDto): Observable<Student> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
     return this.usersClient
@@ -62,5 +61,16 @@ export class StudentService {
     return this.usersClient
       .send<void, number>({ cmd: 'remove_student' }, Number(id))
       .pipe(catchRpcException<void>());
+  }
+
+  async register(
+    payload: RegisterStudentRequestDto,
+  ): Promise<RegisterStudentResponseDto> {
+    return await firstValueFrom(
+      this.usersClient.send<
+        RegisterStudentResponseDto,
+        RegisterStudentRequestDto
+      >({ cmd: 'create_student' }, payload),
+    );
   }
 }

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
 import {
@@ -14,6 +15,8 @@ import {
 } from './interfaces/dtos/instructor.dto';
 import { Observable } from 'rxjs';
 import { Instructor } from './interfaces/instructor.interface';
+import { RegisterTeacherRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.request.dto';
+import type { RegisterTeacherResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.response.dto';
 
 @Controller('instructors')
 export class InstructorController {
@@ -47,5 +50,14 @@ export class InstructorController {
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {
     return this.instructorService.remove(id);
+  }
+
+  @Post('register/teacher')
+  async registerTeacher(
+    @Body() body: RegisterTeacherRequestDto,
+  ): Promise<RegisterTeacherResponseDto> {
+    const result = await this.instructorService.register(body);
+    if (!result) throw new UnauthorizedException('Teacher registration failed');
+    return result;
   }
 }

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  UnauthorizedException,
   UseInterceptors,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
@@ -16,6 +17,8 @@ import {
   CreateStudentDto,
   UpdateStudentDto,
 } from './interfaces/dtos/student.dto';
+import { RegisterStudentRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.request.dto';
+import type { RegisterStudentResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.response.dto';
 
 @Controller('students')
 @UseInterceptors(TransformInterceptor)
@@ -48,5 +51,14 @@ export class StudentController {
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
     return this.studentService.remove(id);
+  }
+
+  @Post('register')
+  async registerStudent(
+    @Body() body: RegisterStudentRequestDto,
+  ): Promise<RegisterStudentResponseDto> {
+    const result = await this.studentService.register(body);
+    if (!result) throw new UnauthorizedException('Student registration failed');
+    return result;
   }
 }

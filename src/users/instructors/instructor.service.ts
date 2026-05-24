@@ -6,11 +6,13 @@ import {
   UpdateInstructorDto,
 } from './interfaces/dtos/instructor.dto';
 import { Instructor } from './interfaces/instructor.interface';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import {
   assertObjectIsNumber,
   catchRpcException,
 } from '../../common/check-utils';
+import type { RegisterTeacherRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.request.dto';
+import type { RegisterTeacherResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.response.dto';
 
 @Injectable()
 export class InstructorService {
@@ -53,5 +55,16 @@ export class InstructorService {
 
   remove(id: number): Observable<void> {
     return this.usersClient.send({ cmd: 'remove_instructor' }, id);
+  }
+
+  async register(
+    payload: RegisterTeacherRequestDto,
+  ): Promise<RegisterTeacherResponseDto> {
+    return await firstValueFrom(
+      this.usersClient.send<
+        RegisterTeacherResponseDto,
+        RegisterTeacherRequestDto
+      >({ cmd: 'create_instructor' }, payload),
+    );
   }
 }
