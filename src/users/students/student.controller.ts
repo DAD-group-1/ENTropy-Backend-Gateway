@@ -11,17 +11,13 @@ import {
 } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Observable } from 'rxjs';
-import { Student } from './interfaces/student.interface';
-import { TransformInterceptor } from '../../common/transform-interceptor';
-import {
-  CreateStudentDto,
-  UpdateStudentDto,
-} from './interfaces/dtos/student.dto';
+import {CreateStudentDto, Student, UpdateStudentDto,} from '@dad-group-1/backend-common';
+import {MessageTransformerInterceptor} from "../../helpers/message-interceptor";
 import { RegisterStudentRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.request.dto';
 import type { RegisterStudentResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.response.dto';
 
 @Controller('students')
-@UseInterceptors(TransformInterceptor)
+@UseInterceptors(MessageTransformerInterceptor)
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
 

@@ -9,12 +9,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
-import {
-  CreateInstructorDto,
-  UpdateInstructorDto,
-} from './interfaces/dtos/instructor.dto';
 import { Observable } from 'rxjs';
-import { Instructor } from './interfaces/instructor.interface';
+import {CreateInstructorDto, Instructor, UpdateInstructorDto} from "@dad-group-1/backend-common";
 import { RegisterTeacherRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.request.dto';
 import type { RegisterTeacherResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.response.dto';
 

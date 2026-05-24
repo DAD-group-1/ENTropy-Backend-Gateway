@@ -1,16 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { usersServiceClientModuleName } from '../../common/client-modules';
+import { usersServiceClientModuleName } from '../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
-import {
-  CreateInstructorDto,
-  UpdateInstructorDto,
-} from './interfaces/dtos/instructor.dto';
-import { Instructor } from './interfaces/instructor.interface';
-import { firstValueFrom, Observable } from 'rxjs';
 import {
   assertObjectIsNumber,
   catchRpcException,
-} from '../../common/check-utils';
+  CreateInstructorDto,
+  Instructor,
+  UpdateInstructorDto
+} from "@dad-group-1/backend-common";
+import {Observable} from "rxjs";
 import type { RegisterTeacherRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.request.dto';
 import type { RegisterTeacherResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.response.dto';
 
