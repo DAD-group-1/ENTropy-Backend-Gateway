@@ -23,6 +23,6 @@ const usersClientModule = ClientsModule.registerAsync([
   imports: [usersClientModule],
   controllers: [UsersController],
   providers: [UsersService],
-  exports: [usersClientModule], // This makes USERS_SERVICE available to any module that imports UsersModule
+  exports: [usersClientModule],
 })
 export class UsersModule {}
