@@ -8,12 +8,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
-import {
-  CreateInstructorDto,
-  UpdateInstructorDto,
-} from './interfaces/dtos/instructor.dto';
 import { Observable } from 'rxjs';
-import { Instructor } from './interfaces/instructor.interface';
+import {CreateInstructorDto, Instructor, UpdateInstructorDto} from "@dad-group-1/backend-common";
 
 @Controller('instructors')
 export class InstructorController {

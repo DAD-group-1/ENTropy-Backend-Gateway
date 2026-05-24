@@ -1,16 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { usersServiceClientModuleName } from '../../common/client-modules';
+import { usersServiceClientModuleName } from '../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
-import {
-  CreateInstructorDto,
-  UpdateInstructorDto,
-} from './interfaces/dtos/instructor.dto';
-import { Instructor } from './interfaces/instructor.interface';
-import { Observable } from 'rxjs';
 import {
   assertObjectIsNumber,
   catchRpcException,
-} from '../../common/check-utils';
+  CreateInstructorDto,
+  Instructor,
+  UpdateInstructorDto
+} from "@dad-group-1/backend-common";
+import {Observable} from "rxjs";
 
 @Injectable()
 export class InstructorService {

@@ -1,18 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { catchError, EMPTY, Observable } from 'rxjs';
-import { ClientProxy } from '@nestjs/microservices';
-import { Student } from './interfaces/student.interface';
-import { usersServiceClientModuleName } from '../../common/client-modules';
-import {
-  assertObjectIsNumber,
-  catchRpcException,
-  throwHttpError,
-} from '../../common/check-utils';
-import { MicroserviceRpcException } from '../../common/interfaces/error.interface';
-import {
-  CreateStudentDto,
-  UpdateStudentDto,
-} from './interfaces/dtos/student.dto';
+import {Inject, Injectable} from '@nestjs/common';
+import {Observable} from 'rxjs';
+import {ClientProxy} from '@nestjs/microservices';
+import {Student, assertObjectIsNumber, catchRpcException, CreateStudentDto, UpdateStudentDto,} from '@dad-group-1/backend-common';
+import {usersServiceClientModuleName} from "../../helpers/client-modules";
 
 @Injectable()
 export class StudentService {
