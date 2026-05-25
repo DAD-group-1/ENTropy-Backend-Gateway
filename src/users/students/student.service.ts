@@ -2,13 +2,13 @@ import {Inject, Injectable} from '@nestjs/common';
 import {Observable} from 'rxjs';
 import {ClientProxy} from '@nestjs/microservices';
 import {
-    assertObjectIsNumber,
-    catchRpcException,
     CreateStudentDto,
     Student,
     UpdateStudentDto,
 } from '@dad-group-1/backend-common';
 import {usersServiceClientModuleName} from "../../helpers/client-modules";
+import {UpdateCommand} from "../../helpers/commands";
+import {assertObjectIsNumber, catchRpcException} from "../../helpers/check-utils";
 
 @Injectable()
 export class StudentService {
@@ -49,7 +49,7 @@ export class StudentService {
         return this.usersClient
             .send<
                 Student,
-                { id: number; updateData: UpdateStudentDto }
+                UpdateCommand<UpdateStudentDto>
             >({cmd: 'update_student'}, {id: Number(id), updateData: updateData})
             .pipe(catchRpcException<Student>());
     }

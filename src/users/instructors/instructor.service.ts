@@ -2,13 +2,13 @@ import {Inject, Injectable} from '@nestjs/common';
 import {usersServiceClientModuleName} from '../../helpers/client-modules';
 import {ClientProxy} from '@nestjs/microservices';
 import {
-  assertObjectIsNumber,
-  catchRpcException,
-  CreateInstructorDto,
-  Instructor,
-  UpdateInstructorDto
+    CreateInstructorDto,
+    Instructor,
+    UpdateInstructorDto
 } from "@dad-group-1/backend-common";
 import {Observable} from "rxjs";
+import {UpdateCommand} from "../../helpers/commands";
+import {assertObjectIsNumber, catchRpcException} from "../../helpers/check-utils";
 
 @Injectable()
 export class InstructorService {
@@ -45,12 +45,15 @@ export class InstructorService {
         return this.usersClient
             .send<
                 Instructor,
-                { id: number; updateData: UpdateInstructorDto }
-            >({cmd: 'update_instructor'}, {id: Number(id), updateData})
+                UpdateCommand<UpdateInstructorDto>
+            >({cmd: 'update_instructor'}, {id: Number(id), updateData: updateData})
             .pipe(catchRpcException<Instructor>());
     }
 
     remove(id: number): Observable<void> {
-        return this.usersClient.send({cmd: 'remove_instructor'}, id);
+        assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+        return this.usersClient
+            .send<void, number>({cmd: 'remove_instructor'}, Number(id))
+            .pipe(catchRpcException<void>());
     }
 }
