@@ -2,11 +2,11 @@ import {Inject, Injectable} from '@nestjs/common';
 import {Observable} from 'rxjs';
 import {ClientProxy} from '@nestjs/microservices';
 import {
-  assertObjectIsNumber,
-  catchRpcException,
-  CreateStudentDto,
-  Student,
-  UpdateStudentDto,
+    assertObjectIsNumber,
+    catchRpcException,
+    CreateStudentDto,
+    Student,
+    UpdateStudentDto,
 } from '@dad-group-1/backend-common';
 import {usersServiceClientModuleName} from "../../helpers/client-modules";
 
@@ -22,7 +22,7 @@ export class StudentService {
         return this.usersClient.send<Student, CreateStudentDto>(
             {cmd: 'create_student'},
             createStudentDto,
-        );
+        ).pipe(catchRpcException<Student>());
     }
 
     findAll(): Observable<Student[]> {
