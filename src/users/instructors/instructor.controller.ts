@@ -1,9 +1,11 @@
-import {Body, Controller, Delete, Get, Param, Patch, Post,} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors,} from '@nestjs/common';
 import {InstructorService} from './instructor.service';
 import {Observable} from 'rxjs';
 import {CreateInstructorDto, Instructor, UpdateInstructorDto} from "@dad-group-1/backend-common";
+import {MessageTransformerInterceptor} from "../../helpers/message-interceptor";
 
 @Controller('instructors')
+@UseInterceptors(MessageTransformerInterceptor)
 export class InstructorController {
     constructor(private readonly instructorService: InstructorService) {
     }
