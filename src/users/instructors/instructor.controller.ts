@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
 import { Observable } from 'rxjs';
@@ -14,48 +15,47 @@ import {
   CreateInstructorDto,
   CreateInstructorResponseDto,
   Instructor,
-  throwHttpError,
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { MessageTransformerInterceptor } from "../../helpers/message-interceptor";
+import { MessageTransformerInterceptor } from '../../helpers/message-interceptor';
+import { throwHttpError } from '../../helpers/check-utils';
 
 @Controller('instructors')
 @UseInterceptors(MessageTransformerInterceptor)
 export class InstructorController {
-    constructor(private readonly instructorService: InstructorService) {
-    }
+  constructor(private readonly instructorService: InstructorService) {}
 
-    @Post()
-    create(
-        @Body() createInstructorDto: CreateInstructorDto,
-    ): Observable<Instructor> {
-        return this.instructorService.create(createInstructorDto);
-    }
+  @Post()
+  create(
+    @Body() createInstructorDto: CreateInstructorDto,
+  ): Observable<Instructor> {
+    return this.instructorService.create(createInstructorDto);
+  }
 
-    @Get()
-    findAll(): Observable<Instructor[]> {
-        return this.instructorService.findAll();
-    }
+  @Get()
+  findAll(): Observable<Instructor[]> {
+    return this.instructorService.findAll();
+  }
 
-    @Get(':id')
-    findOne(@Param('id') id: string): Observable<Instructor> {
-        return this.instructorService.findOne(id);
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string): Observable<Instructor> {
+    return this.instructorService.findOne(id);
+  }
 
-    @Patch(':id')
-    update(
-        @Param('id') id: string,
-        @Body() updateInstructorDto: UpdateInstructorDto,
-    ): Observable<Instructor> {
-        return this.instructorService.update(id, updateInstructorDto);
-    }
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateInstructorDto: UpdateInstructorDto,
+  ): Observable<Instructor> {
+    return this.instructorService.update(id, updateInstructorDto);
+  }
 
-    @Delete(':id')
-    remove(@Param('id') id: number): Observable<void> {
-        return this.instructorService.remove(id);
-    }
+  @Delete(':id')
+  remove(@Param('id') id: number): Observable<void> {
+    return this.instructorService.remove(id);
+  }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
