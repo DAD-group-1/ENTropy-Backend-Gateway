@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -27,11 +28,19 @@ import { throwHttpError } from '../../helpers/check-utils';
 export class InstructorController {
   constructor(private readonly instructorService: InstructorService) {}
 
-  @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post('create')
   create(
-    @Body() createInstructorDto: CreateInstructorDto,
-  ): Observable<Instructor> {
-    return this.instructorService.create(createInstructorDto);
+    @Body() body: CreateInstructorDto,
+  ): Observable<CreateInstructorResponseDto> {
+    const result = this.instructorService.create(body);
+    if (!result)
+      throwHttpError(
+        'Instructor registration failed',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    return result;
   }
 
   @Get()
@@ -55,16 +64,5 @@ export class InstructorController {
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {
     return this.instructorService.remove(id);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @Post('register')
-  async registerTeacher(
-    @Body() body: CreateInstructorDto,
-  ): Promise<CreateInstructorResponseDto> {
-    const result = await this.instructorService.register(body);
-    if (!result) throwHttpError('Instructor registration failed', 401);
-    return result;
   }
 }

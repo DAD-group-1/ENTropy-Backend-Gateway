@@ -1,70 +1,67 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { firstValueFrom, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import {
-  CreateStudentDto,Student,
-
+  CreateStudentDto,
+  Student,
   UpdateStudentDto,
   CreateStudentResponseDto,
 } from '@dad-group-1/backend-common';
 import { usersServiceClientModuleName } from '../../helpers/client-modules';
-import {UpdateCommand} from "../../helpers/commands";
-import {assertObjectIsNumber, catchRpcException} from "../../helpers/check-utils";
+import { UpdateCommand } from '../../helpers/commands';
+import {
+  assertObjectIsNumber,
+  catchRpcException,
+} from '../../helpers/check-utils';
 
 @Injectable()
 export class StudentService {
-    constructor(
-        @Inject(usersServiceClientModuleName)
-        private readonly usersClient: ClientProxy,
-    ) {
-    }
+  constructor(
+    @Inject(usersServiceClientModuleName)
+    private readonly usersClient: ClientProxy,
+  ) {}
 
-    create(createStudentDto: CreateStudentDto): Observable<Student> {
-        return this.usersClient.send<Student, CreateStudentDto>(
-            {cmd: 'create_student'},
-            createStudentDto,
-        ).pipe(catchRpcException<Student>());
-    }
+  create(
+    createStudentDto: CreateStudentDto,
+  ): Observable<CreateStudentResponseDto> {
+    return this.usersClient
+      .send<
+        CreateStudentResponseDto,
+        CreateStudentDto
+      >({ cmd: 'create_student' }, createStudentDto)
+      .pipe(catchRpcException<CreateStudentResponseDto>());
+  }
 
-    findAll(): Observable<Student[]> {
-        return this.usersClient.send<Student[], Record<string, unknown>>(
-            {cmd: 'find_all_students'},
-            {},
-        );
-    }
+  findAll(): Observable<Student[]> {
+    return this.usersClient.send<Student[], Record<string, unknown>>(
+      { cmd: 'find_all_students' },
+      {},
+    );
+  }
 
-    findOne(id: string): Observable<Student> {
-        assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+  findOne(id: string): Observable<Student> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
-        return this.usersClient
-            .send<Student, number>({cmd: 'find_one_student'}, Number(id))
-            .pipe(catchRpcException<Student>());
-    }
+    return this.usersClient
+      .send<Student, number>({ cmd: 'find_one_student' }, Number(id))
+      .pipe(catchRpcException<Student>());
+  }
 
   update(id: string, updateData: UpdateStudentDto): Observable<Student> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
-        return this.usersClient
-            .send<
-                Student,
-                UpdateCommand<UpdateStudentDto>
-            >({cmd: 'update_student'}, {id: Number(id), updateData: updateData})
-            .pipe(catchRpcException<Student>());
-    }
+    return this.usersClient
+      .send<
+        Student,
+        UpdateCommand<UpdateStudentDto>
+      >({ cmd: 'update_student' }, { id: Number(id), updateData: updateData })
+      .pipe(catchRpcException<Student>());
+  }
 
-    remove(id: string): Observable<void> {
-        assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
-        return this.usersClient
-            .send<void, number>({cmd: 'remove_student'}, Number(id))
-            .pipe(catchRpcException<void>());
-    }
-
-  async register(payload: CreateStudentDto): Promise<CreateStudentResponseDto> {
-    return await firstValueFrom(
-      this.usersClient.send<CreateStudentResponseDto, CreateStudentDto>(
-        { cmd: 'create_student' },
-        payload,
-      ),
-    );
+  remove(id: string): Observable<void> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    return this.usersClient
+      .send<void, number>({ cmd: 'remove_student' }, Number(id))
+      .pipe(catchRpcException<void>());
   }
 }
