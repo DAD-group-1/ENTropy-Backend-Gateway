@@ -16,6 +16,7 @@ async function bootstrap() {
         .setDescription('The ENTropy API description')
         .setVersion('1.0')
         .addTag('swiirzi-redhidi-en0ri4ni')
+        .addBearerAuth()
         .build();
 
     const documentFactory = () => SwaggerModule.createDocument(app, config);
