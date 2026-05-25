@@ -6,13 +6,19 @@ import {
   Param,
   Patch,
   Post,
-  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
 import { Observable } from 'rxjs';
-import {CreateInstructorDto, Instructor, UpdateInstructorDto} from "@dad-group-1/backend-common";
-import { RegisterTeacherRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.request.dto';
-import type { RegisterTeacherResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.response.dto';
+import {
+  CreateInstructorDto,
+  CreateInstructorResponseDto,
+  Instructor,
+  throwHttpError,
+  UpdateInstructorDto,
+} from '@dad-group-1/backend-common';
+import { JwtAuthGuard } from '../../guards/jwt.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('instructors')
 export class InstructorController {
@@ -48,12 +54,14 @@ export class InstructorController {
     return this.instructorService.remove(id);
   }
 
-  @Post('register/teacher')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post('register')
   async registerTeacher(
-    @Body() body: RegisterTeacherRequestDto,
-  ): Promise<RegisterTeacherResponseDto> {
+    @Body() body: CreateInstructorDto,
+  ): Promise<CreateInstructorResponseDto> {
     const result = await this.instructorService.register(body);
-    if (!result) throw new UnauthorizedException('Teacher registration failed');
+    if (!result) throwHttpError('Instructor registration failed', 401);
     return result;
   }
 }

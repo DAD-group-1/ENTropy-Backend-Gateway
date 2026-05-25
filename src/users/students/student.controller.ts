@@ -7,14 +7,20 @@ import {
   Patch,
   Post,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Observable } from 'rxjs';
-import {CreateStudentDto, Student, UpdateStudentDto,} from '@dad-group-1/backend-common';
-import {MessageTransformerInterceptor} from "../../helpers/message-interceptor";
-import { RegisterStudentRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.request.dto';
-import type { RegisterStudentResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/students/interfaces/dtos/register-student.response.dto';
+import {
+  CreateStudentDto,
+  CreateStudentResponseDto,
+  Student,
+  UpdateStudentDto,
+} from '@dad-group-1/backend-common';
+import { MessageTransformerInterceptor } from '../../helpers/message-interceptor';
+import { JwtAuthGuard } from '../../guards/jwt.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('students')
 @UseInterceptors(MessageTransformerInterceptor)
@@ -49,10 +55,12 @@ export class StudentController {
     return this.studentService.remove(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Post('register')
   async registerStudent(
-    @Body() body: RegisterStudentRequestDto,
-  ): Promise<RegisterStudentResponseDto> {
+    @Body() body: CreateStudentDto,
+  ): Promise<CreateStudentResponseDto> {
     const result = await this.studentService.register(body);
     if (!result) throw new UnauthorizedException('Student registration failed');
     return result;

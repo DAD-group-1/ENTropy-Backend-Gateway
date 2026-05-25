@@ -1,8 +1,15 @@
-import {Inject, Injectable} from '@nestjs/common';
-import {Observable} from 'rxjs';
-import {ClientProxy} from '@nestjs/microservices';
-import {Student, assertObjectIsNumber, catchRpcException, CreateStudentDto, UpdateStudentDto,} from '@dad-group-1/backend-common';
-import {usersServiceClientModuleName} from "../../helpers/client-modules";
+import { Inject, Injectable } from '@nestjs/common';
+import { firstValueFrom, Observable } from 'rxjs';
+import { ClientProxy } from '@nestjs/microservices';
+import {
+  Student,
+  assertObjectIsNumber,
+  catchRpcException,
+  CreateStudentDto,
+  UpdateStudentDto,
+  CreateStudentResponseDto,
+} from '@dad-group-1/backend-common';
+import { usersServiceClientModuleName } from '../../helpers/client-modules';
 
 @Injectable()
 export class StudentService {
@@ -51,14 +58,12 @@ export class StudentService {
       .pipe(catchRpcException<void>());
   }
 
-  async register(
-    payload: RegisterStudentRequestDto,
-  ): Promise<RegisterStudentResponseDto> {
+  async register(payload: CreateStudentDto): Promise<CreateStudentResponseDto> {
     return await firstValueFrom(
-      this.usersClient.send<
-        RegisterStudentResponseDto,
-        RegisterStudentRequestDto
-      >({ cmd: 'create_student' }, payload),
+      this.usersClient.send<CreateStudentResponseDto, CreateStudentDto>(
+        { cmd: 'create_student' },
+        payload,
+      ),
     );
   }
 }

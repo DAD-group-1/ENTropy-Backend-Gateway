@@ -5,12 +5,11 @@ import {
   assertObjectIsNumber,
   catchRpcException,
   CreateInstructorDto,
+  CreateInstructorResponseDto,
   Instructor,
-  UpdateInstructorDto
-} from "@dad-group-1/backend-common";
-import {Observable} from "rxjs";
-import type { RegisterTeacherRequestDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.request.dto';
-import type { RegisterTeacherResponseDto } from '../../../../../ENTropy-Backend-Common/src/core/services/users/instructors/interfaces/dtos/register-teacher.response.dto';
+  UpdateInstructorDto,
+} from '@dad-group-1/backend-common';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable()
 export class InstructorService {
@@ -56,13 +55,13 @@ export class InstructorService {
   }
 
   async register(
-    payload: RegisterTeacherRequestDto,
-  ): Promise<RegisterTeacherResponseDto> {
+    payload: CreateInstructorDto,
+  ): Promise<CreateInstructorResponseDto> {
     return await firstValueFrom(
-      this.usersClient.send<
-        RegisterTeacherResponseDto,
-        RegisterTeacherRequestDto
-      >({ cmd: 'create_instructor' }, payload),
+      this.usersClient.send<CreateInstructorResponseDto, CreateInstructorDto>(
+        { cmd: 'create_instructor' },
+        payload,
+      ),
     );
   }
 }
