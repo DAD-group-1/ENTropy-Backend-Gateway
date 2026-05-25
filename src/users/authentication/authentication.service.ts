@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { firstValueFrom, pipe } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { usersServiceClientModuleName } from '../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
 import { LoginResponseDto } from '@dad-group-1/backend-common';

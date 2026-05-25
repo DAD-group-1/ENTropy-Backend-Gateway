@@ -7,7 +7,7 @@ import {
   Instructor,
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
-import { firstValueFrom, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { UpdateCommand } from '../../helpers/commands';
 import {
   assertObjectIsNumber,

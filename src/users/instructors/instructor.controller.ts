@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -21,7 +20,6 @@ import {
 import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { MessageTransformerInterceptor } from '../../helpers/message-interceptor';
-import { throwHttpError } from '../../helpers/check-utils';
 
 @Controller('instructors')
 @UseInterceptors(MessageTransformerInterceptor)
@@ -30,17 +28,11 @@ export class InstructorController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @Post('create')
+  @Post()
   create(
     @Body() body: CreateInstructorDto,
   ): Observable<CreateInstructorResponseDto> {
-    const result = this.instructorService.create(body);
-    if (!result)
-      throwHttpError(
-        'Instructor registration failed',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    return result;
+    return this.instructorService.create(body);
   }
 
   @Get()

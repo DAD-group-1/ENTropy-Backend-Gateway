@@ -1,27 +1,10 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Observable } from 'rxjs';
-import {
-  CreateStudentDto,
-  CreateStudentResponseDto,
-  Student,
-  UpdateStudentDto,
-} from '@dad-group-1/backend-common';
+import { CreateStudentDto, CreateStudentResponseDto, Student, UpdateStudentDto, } from '@dad-group-1/backend-common';
 import { MessageTransformerInterceptor } from '../../helpers/message-interceptor';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { throwHttpError } from '../../helpers/check-utils';
 
 @Controller('students')
 @UseInterceptors(MessageTransformerInterceptor)
@@ -34,13 +17,7 @@ export class StudentController {
   create(
     @Body() createStudentDto: CreateStudentDto,
   ): Observable<CreateStudentResponseDto> {
-    const result = this.studentService.create(createStudentDto);
-    if (!result)
-      throw new throwHttpError(
-        'Instructor registration failed',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    return result;
+    return this.studentService.create(createStudentDto);
   }
 
   @Get()
