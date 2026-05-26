@@ -1,7 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Observable } from 'rxjs';
-import { CreateStudentDto, CreateStudentResponseDto, Student, UpdateStudentDto, } from '@dad-group-1/backend-common';
+import {
+  CreateStudentDto,
+  CreateStudentResponseDto,
+  Student,
+  UpdateStudentDto,
+} from '@dad-group-1/backend-common';
 import { MessageTransformerInterceptor } from '../../helpers/message-interceptor';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';

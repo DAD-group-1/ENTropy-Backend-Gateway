@@ -1,12 +1,12 @@
-import {ClientsModule, Transport} from '@nestjs/microservices';
-import {ConfigModule, ConfigService} from '@nestjs/config';
-import {DynamicModule} from "@nestjs/common";
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { DynamicModule } from '@nestjs/common';
 
 export class MicroserviceNetworkConfig {
-    hostEnvVarName: string;
-    portEnvVarName: string;
-    defaultHost: string;
-    defaultPort: number;
+  hostEnvVarName: string;
+  portEnvVarName: string;
+  defaultHost: string;
+  defaultPort: number;
 }
 
 /**
@@ -22,28 +22,37 @@ export class MicroserviceNetworkConfig {
  * @returns {DynamicModule} A dynamic module configured for the specified microservice client.
  */
 const createClientModule = (
-    name: string,
-    microserviceNetworkConfig: Partial<MicroserviceNetworkConfig> = {
-        hostEnvVarName: `${name}_HOST`,
-        portEnvVarName: `${name}_PORT`,
-        defaultHost: `localhost`,
-        defaultPort: 3001,
-    },
+  name: string,
+  microserviceNetworkConfig: Partial<MicroserviceNetworkConfig> = {
+    hostEnvVarName: `${name}_HOST`,
+    portEnvVarName: `${name}_PORT`,
+    defaultHost: `localhost`,
+    defaultPort: 3001,
+  },
 ): DynamicModule =>
-    ClientsModule.registerAsync([
-        {
-            name: name,
-            imports: [ConfigModule],
-            useFactory: (configService: ConfigService) => ({
-                transport: Transport.TCP,
-                options: {
-                    host: configService.get<string>(microserviceNetworkConfig.hostEnvVarName!, microserviceNetworkConfig.defaultHost!),
-                    port: configService.get<number>(microserviceNetworkConfig.portEnvVarName!, microserviceNetworkConfig.defaultPort!),
-                },
-            }),
-            inject: [ConfigService],
+  ClientsModule.registerAsync([
+    {
+      name: name,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transport: Transport.TCP,
+        options: {
+          host: configService.get<string>(
+            microserviceNetworkConfig.hostEnvVarName!,
+            microserviceNetworkConfig.defaultHost!,
+          ),
+          port: configService.get<number>(
+            microserviceNetworkConfig.portEnvVarName!,
+            microserviceNetworkConfig.defaultPort!,
+          ),
         },
-    ]);
+      }),
+      inject: [ConfigService],
+    },
+  ]);
 
 export const usersServiceClientModuleName = 'USERS_SERVICE';
-export const usersServiceClientModule: DynamicModule = createClientModule(usersServiceClientModuleName, {defaultPort: 3001});
+export const usersServiceClientModule: DynamicModule = createClientModule(
+  usersServiceClientModuleName,
+  { defaultPort: 3001 },
+);

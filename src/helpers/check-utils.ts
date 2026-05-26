@@ -1,6 +1,6 @@
-import {HttpException, HttpStatus} from '@nestjs/common';
-import {catchError, EMPTY, OperatorFunction} from 'rxjs';
-import {MicroserviceRpcException} from './interfaces/error.interface';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { catchError, EMPTY, OperatorFunction } from 'rxjs';
+import { MicroserviceRpcException } from './interfaces/error.interface';
 
 /**
  * Checks if the given value can be converted to a number. If not, throws an HttpException with the provided error message.
@@ -10,9 +10,9 @@ import {MicroserviceRpcException} from './interfaces/error.interface';
  * @throws HttpException with the provided error message if the value cannot be converted to a number
  */
 export function assertObjectIsNumber(value: any, error: string): void {
-    if (isNaN(Number(value))) {
-        throwHttpError(error);
-    }
+  if (isNaN(Number(value))) {
+    throwHttpError(error);
+  }
 }
 
 /**
@@ -23,9 +23,9 @@ export function assertObjectIsNumber(value: any, error: string): void {
  * @throws HttpException with the provided error message and a 404 Not Found status code if the value is null or undefined
  */
 export function assertObjectIsNotEmpty(value: any, error: string): void {
-    if (value === null || value === undefined) {
-        throwHttpError(error, HttpStatus.NOT_FOUND);
-    }
+  if (value === null || value === undefined) {
+    throwHttpError(error, HttpStatus.NOT_FOUND);
+  }
 }
 
 /**
@@ -36,12 +36,12 @@ export function assertObjectIsNotEmpty(value: any, error: string): void {
  * @throws HttpException with the given error message and status code
  */
 export function throwHttpError(
-    error: string,
-    status: HttpStatus = HttpStatus.BAD_REQUEST,
+  error: string,
+  status: HttpStatus = HttpStatus.BAD_REQUEST,
 ): void {
-    throw new HttpException(error, status, {
-        cause: new Error(error),
-    });
+  throw new HttpException(error, status, {
+    cause: new Error(error),
+  });
 }
 
 /**
@@ -52,8 +52,8 @@ export function throwHttpError(
  * @throws HttpException with the message and status code from the caught MicroserviceRpcException
  */
 export function catchRpcException<T>(): OperatorFunction<T, T> {
-    return catchError((error: MicroserviceRpcException) => {
-        throwHttpError(error.message, error.code);
-        return EMPTY;
-    });
+  return catchError((error: MicroserviceRpcException) => {
+    throwHttpError(error.message, error.code);
+    return EMPTY;
+  });
 }
