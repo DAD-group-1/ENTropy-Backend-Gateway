@@ -4,9 +4,13 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { HttpExceptionFilter } from './helpers/http-exception-filter';
+import { createWinstonLogger } from '@dad-group-1/backend-common';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule);
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, {
+    logger: createWinstonLogger('gateway', 'info'),
+  });
   const configService = app.get(ConfigService);
   app.enableCors();
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -24,7 +28,10 @@ async function bootstrap() {
 
   const port = configService.get<number>('PORT', 3000);
   await app.listen(port);
-  console.log(`Gateway is running on: http://localhost:${port}`);
+
+  new Logger('Bootstrap').log(
+    `Gateway is running on: http://localhost:${port}`,
+  );
 }
 
 bootstrap();
