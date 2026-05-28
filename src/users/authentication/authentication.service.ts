@@ -20,11 +20,11 @@ export class AuthenticationService {
   }
 
   async sendRefreshToken(
-    refresh_token: RefreshTokenDto,
+    refreshToken: RefreshTokenDto,
   ): Promise<TokenResponseDto> {
     return await firstValueFrom(
       this.usersClient
-        .send<TokenResponseDto>({ cmd: 'refresh_token' }, refresh_token)
+        .send<TokenResponseDto>({ cmd: 'refresh_token' }, refreshToken)
         .pipe(catchRpcException<TokenResponseDto>()),
     );
   }
