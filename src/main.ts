@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule, } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -15,6 +15,8 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  app.setGlobalPrefix('api');
+
   const config = new DocumentBuilder()
     .setTitle('ENTropy API')
     .setDescription('The ENTropy API description')
@@ -23,7 +25,16 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const swaggerOptions: SwaggerDocumentOptions = {
+    operationIdFactory: (controllerKey: string, methodKey: string) => {
+      const controller = controllerKey.replace(/Controller$/, '');
+      // Example output: "Users_create"
+      return `${controller}_${methodKey}`;
+    },
+  };
+
+  const documentFactory = () =>
+    SwaggerModule.createDocument(app, config, swaggerOptions);
   SwaggerModule.setup('api', app, documentFactory);
 
   const port = configService.get<number>('PORT', 3000);
