@@ -5,9 +5,12 @@ import {
   RefreshTokenDto,
   TokenResponseDto,
 } from '@dad-group-1/backend-common';
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import {Body, Controller, Get, HttpStatus, Post, UseGuards} from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { throwHttpError } from '../../helpers/check-utils';
+import {AuthGuard} from "@nestjs/passport";
+import {JwtAuthGuard} from "../../guards/jwt.guard";
+import {ApiBearerAuth} from "@nestjs/swagger";
 
 @Controller('')
 export class AuthenticationController {
@@ -38,5 +41,12 @@ export class AuthenticationController {
     if (!result)
       throwHttpError('Token refresh failed', HttpStatus.INTERNAL_SERVER_ERROR);
     return result;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get('verify')
+  async verifyToken(): Promise<{}> {
+    return {};
   }
 }
