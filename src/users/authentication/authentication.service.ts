@@ -2,7 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { usersServiceClientModuleName } from '../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
-import { RefreshTokenDto, TokenResponseDto } from '@dad-group-1/backend-common';
+import {
+  LogoutDto,
+  LogoutResponseDto,
+  RefreshTokenDto,
+  TokenResponseDto,
+} from '@dad-group-1/backend-common';
 import { catchRpcException } from '../../helpers/check-utils';
 
 @Injectable()
@@ -26,6 +31,14 @@ export class AuthenticationService {
       this.usersClient
         .send<TokenResponseDto>({ cmd: 'refresh_token' }, refreshToken)
         .pipe(catchRpcException<TokenResponseDto>()),
+    );
+  }
+
+  async sendLogout(refreshToken: LogoutDto): Promise<LogoutResponseDto> {
+    return await firstValueFrom(
+      this.usersClient
+        .send<LogoutResponseDto>({ cmd: 'logout' }, refreshToken)
+        .pipe(catchRpcException<LogoutResponseDto>()),
     );
   }
 }
