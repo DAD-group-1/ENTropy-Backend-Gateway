@@ -35,16 +35,22 @@ export class StudentController {
     return this.studentService.create(createStudentDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get()
   findAll(): Observable<Student[]> {
     return this.studentService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get(':id')
   findOne(@Param('id') id: string): Observable<Student> {
     return this.studentService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -53,6 +59,8 @@ export class StudentController {
     return this.studentService.update(id, updateStudentDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
     return this.studentService.remove(id);
