@@ -35,16 +35,22 @@ export class InstructorController {
     return this.instructorService.create(body);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get()
   findAll(): Observable<Instructor[]> {
     return this.instructorService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get(':id')
   findOne(@Param('id') id: string): Observable<Instructor> {
     return this.instructorService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -53,6 +59,8 @@ export class InstructorController {
     return this.instructorService.update(id, updateInstructorDto);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {
     return this.instructorService.remove(id);
