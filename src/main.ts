@@ -6,6 +6,7 @@ import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { HttpExceptionFilter } from './helpers/http-exception-filter';
 import { createWinstonLogger } from '@dad-group-1/backend-common';
 import { Logger } from '@nestjs/common';
+import { MessageTransformerInterceptor } from './helpers/message-interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, {
@@ -16,6 +17,8 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   app.setGlobalPrefix('api');
+
+  app.useGlobalInterceptors(new MessageTransformerInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle('ENTropy API')
