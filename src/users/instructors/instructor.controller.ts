@@ -7,7 +7,6 @@ import {
   Patch,
   Post,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
 import { Observable } from 'rxjs';
@@ -19,10 +18,8 @@ import {
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { MessageTransformerInterceptor } from '../../helpers/message-interceptor';
 
 @Controller('instructors')
-@UseInterceptors(MessageTransformerInterceptor)
 export class InstructorController {
   constructor(private readonly instructorService: InstructorService) {}
 

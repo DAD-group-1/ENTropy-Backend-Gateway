@@ -1,5 +1,7 @@
 import {
   LoginDto,
+  LogoutDto,
+  LogoutResponseDto,
   RefreshTokenDto,
   TokenResponseDto,
 } from '@dad-group-1/backend-common';
@@ -10,6 +12,15 @@ import { throwHttpError } from '../../helpers/check-utils';
 @Controller('')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
+
+  @Post('logout')
+  async logout(@Body() body: LogoutDto): Promise<LogoutResponseDto> {
+    const result = await this.authenticationService.sendLogout(body);
+    if (!result)
+      throwHttpError('Logout failed', HttpStatus.INTERNAL_SERVER_ERROR);
+    return result;
+  }
+
   @Post('login')
   async login(@Body() body: LoginDto): Promise<TokenResponseDto> {
     const result = await this.authenticationService.sendLogin(
