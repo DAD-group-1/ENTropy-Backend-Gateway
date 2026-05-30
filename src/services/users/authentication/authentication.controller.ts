@@ -7,9 +7,8 @@ import {
 } from '@dad-group-1/backend-common';
 import {Body, Controller, Get, HttpStatus, Post, UseGuards} from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
-import { throwHttpError } from '../../helpers/check-utils';
-import {AuthGuard} from "@nestjs/passport";
-import {JwtAuthGuard} from "../../guards/jwt.guard";
+import { throwHttpError } from '../../../helpers/check-utils';
+import {JwtAuthGuard} from "../../../guards/jwt.guard";
 import {ApiBearerAuth} from "@nestjs/swagger";
 
 @Controller('')

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { usersServiceClientModuleName } from '../../helpers/client-modules';
+import { usersServiceClientModuleName } from '../../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   LogoutDto,
@@ -8,7 +8,7 @@ import {
   RefreshTokenDto,
   TokenResponseDto,
 } from '@dad-group-1/backend-common';
-import { catchRpcException } from '../../helpers/check-utils';
+import { catchRpcException } from '../../../helpers/check-utils';
 
 @Injectable()
 export class AuthenticationService {

@@ -7,12 +7,12 @@ import {
   UpdateStudentDto,
   CreateStudentResponseDto,
 } from '@dad-group-1/backend-common';
-import { usersServiceClientModuleName } from '../../helpers/client-modules';
-import { UpdateCommand } from '../../helpers/commands';
+import { usersServiceClientModuleName } from '../../../helpers/client-modules';
+import { UpdateCommand } from '../../../helpers/commands';
 import {
   assertObjectIsNumber,
   catchRpcException,
-} from '../../helpers/check-utils';
+} from '../../../helpers/check-utils';
 
 @Injectable()
 export class StudentService {

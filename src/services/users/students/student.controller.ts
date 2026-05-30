@@ -16,7 +16,7 @@ import {
   Student,
   UpdateStudentDto,
 } from '@dad-group-1/backend-common';
-import { JwtAuthGuard } from '../../guards/jwt.guard';
+import { JwtAuthGuard } from '../../../guards/jwt.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('students')

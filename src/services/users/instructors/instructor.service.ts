@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { usersServiceClientModuleName } from '../../helpers/client-modules';
+import { usersServiceClientModuleName } from '../../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   CreateInstructorDto,
@@ -8,11 +8,11 @@ import {
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
-import { UpdateCommand } from '../../helpers/commands';
+import { UpdateCommand } from '../../../helpers/commands';
 import {
   assertObjectIsNumber,
   catchRpcException,
-} from '../../helpers/check-utils';
+} from '../../../helpers/check-utils';
 
 @Injectable()
 export class InstructorService {
