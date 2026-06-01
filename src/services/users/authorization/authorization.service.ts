@@ -2,10 +2,16 @@ import { Inject, Injectable } from '@nestjs/common';
 import { usersServiceClientModuleName } from '../../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
 import {
+  AddRoleToUserDto,
+  AssignRolesDto,
   CreateRoleDto,
+  CreateUserRoleRequestDto,
   DeleteRoleDto,
+  DeleteUserRoleRequestDto,
+  GetUserRoleDto,
   RoleResponseDto,
   UpdateRoleDto,
+  UserRoleResponseDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
 import { catchRpcException } from '../../../helpers/check-utils';
@@ -52,5 +58,57 @@ export class AuthorizationService {
     return this.usersClient
       .send({ cmd: 'delete_role' }, body)
       .pipe(catchRpcException());
+  }
+
+  addRoleToUser(
+    userId: number,
+    body: AddRoleToUserDto,
+  ): Observable<UserRoleResponseDto> {
+    const payload: CreateUserRoleRequestDto = {
+      user_id: userId,
+      role_id: body.role_id,
+    };
+    return this.usersClient
+      .send<
+        UserRoleResponseDto,
+        CreateUserRoleRequestDto
+      >({ cmd: 'add_role_to_user' }, payload)
+      .pipe(catchRpcException<UserRoleResponseDto>());
+  }
+
+  removeUserRole(userId: number, roleId: number): Observable<unknown> {
+    const payload: DeleteUserRoleRequestDto = {
+      user_id: userId,
+      role_id: roleId,
+    };
+    return this.usersClient
+      .send({ cmd: 'remove_user_role' }, payload)
+      .pipe(catchRpcException());
+  }
+
+  assignRoles(
+    userId: number,
+    body: AssignRolesDto,
+  ): Observable<UserRoleResponseDto[]> {
+    const payload = {
+      user_id: userId,
+      role_ids: body.role_ids,
+    };
+    return this.usersClient
+      .send<
+        UserRoleResponseDto[],
+        { user_id: number; role_ids: number[] }
+      >({ cmd: 'assign_roles_to_user' }, payload)
+      .pipe(catchRpcException<UserRoleResponseDto[]>());
+  }
+
+  getUserRoles(userId: number): Observable<UserRoleResponseDto[]> {
+    const payload: GetUserRoleDto = { user_id: userId };
+    return this.usersClient
+      .send<
+        UserRoleResponseDto[],
+        GetUserRoleDto
+      >({ cmd: 'get_user_roles' }, payload)
+      .pipe(catchRpcException<UserRoleResponseDto[]>());
   }
 }

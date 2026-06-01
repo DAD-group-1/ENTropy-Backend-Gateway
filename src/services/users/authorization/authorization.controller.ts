@@ -6,14 +6,18 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import {
+  AddRoleToUserDto,
+  AssignRolesDto,
   CreateRoleDto,
   DeleteRoleDto,
   RoleResponseDto,
   UpdateRoleDto,
+  UserRoleResponseDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
 import { assertObjectIsNumber } from '../../../helpers/check-utils';
@@ -70,5 +74,57 @@ export class AuthorizationController {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     const body: DeleteRoleDto = { role_id: Number(id) };
     return this.authorizationService.remove(body);
+  }
+}
+
+@Controller()
+export class UserRoleController {
+  constructor(private authorizationService: AuthorizationService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post('/users/:id/roles/add')
+  @ApiBody({ type: AddRoleToUserDto })
+  @ApiResponse({ type: UserRoleResponseDto })
+  addRoleToUser(
+    @Param('id') id: string,
+    @Body() body: AddRoleToUserDto,
+  ): Observable<UserRoleResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    return this.authorizationService.addRoleToUser(Number(id), body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Delete('/users/:id/roles/:roleId/remove')
+  removeUserRole(
+    @Param('id') id: string,
+    @Param('roleId') roleId: string,
+  ): Observable<unknown> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    assertObjectIsNumber(roleId, `Invalid ID: '${roleId}' is not a number`);
+    return this.authorizationService.removeUserRole(Number(id), Number(roleId));
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Put('/users/:id/roles/assign')
+  @ApiBody({ type: AssignRolesDto })
+  @ApiResponse({ type: [UserRoleResponseDto] })
+  assignRoles(
+    @Param('id') id: string,
+    @Body() body: AssignRolesDto,
+  ): Observable<UserRoleResponseDto[]> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    return this.authorizationService.assignRoles(Number(id), body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get('/users/:id/roles')
+  @ApiResponse({ type: [UserRoleResponseDto] })
+  getUserRoles(@Param('id') id: string): Observable<UserRoleResponseDto[]> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    return this.authorizationService.getUserRoles(Number(id));
   }
 }
