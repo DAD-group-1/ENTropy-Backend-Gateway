@@ -17,7 +17,7 @@ import {
   UpdateStudentDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 
 @Controller('students')
 export class StudentController {
@@ -26,6 +26,8 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Post()
+  @ApiBody({ type: CreateStudentDto })
+  @ApiResponse({ type: CreateStudentResponseDto })
   create(
     @Body() createStudentDto: CreateStudentDto,
   ): Observable<CreateStudentResponseDto> {
@@ -35,6 +37,7 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
+  @ApiResponse({ type: [CreateStudentResponseDto] })
   findAll(): Observable<Student[]> {
     return this.studentService.findAll();
   }
@@ -42,6 +45,7 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
+  @ApiResponse({ type: CreateStudentResponseDto })
   findOne(@Param('id') id: string): Observable<Student> {
     return this.studentService.findOne(id);
   }
@@ -49,6 +53,8 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Patch(':id')
+  @ApiBody({ type: UpdateStudentDto })
+  @ApiResponse({ type: CreateStudentResponseDto })
   update(
     @Param('id') id: string,
     @Body() updateStudentDto: UpdateStudentDto,

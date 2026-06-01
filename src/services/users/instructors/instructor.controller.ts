@@ -17,7 +17,7 @@ import {
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 
 @Controller('instructors')
 export class InstructorController {
@@ -26,6 +26,8 @@ export class InstructorController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Post()
+  @ApiBody({ type: CreateInstructorDto })
+  @ApiResponse({ type: CreateInstructorResponseDto })
   create(
     @Body() body: CreateInstructorDto,
   ): Observable<CreateInstructorResponseDto> {
@@ -35,6 +37,7 @@ export class InstructorController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
+  @ApiResponse({ type: [CreateInstructorResponseDto] })
   findAll(): Observable<Instructor[]> {
     return this.instructorService.findAll();
   }
@@ -42,6 +45,7 @@ export class InstructorController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
+  @ApiResponse({ type: CreateInstructorResponseDto })
   findOne(@Param('id') id: string): Observable<Instructor> {
     return this.instructorService.findOne(id);
   }
@@ -49,6 +53,8 @@ export class InstructorController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Patch(':id')
+  @ApiBody({ type: UpdateInstructorDto })
+  @ApiResponse({ type: CreateInstructorResponseDto })
   update(
     @Param('id') id: string,
     @Body() updateInstructorDto: UpdateInstructorDto,
