@@ -18,12 +18,15 @@ import {
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
 import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { Roles } from '../../../decorators/roles.decorator';
+import { RolesGuard } from '../../../guards/roles.guard';
 
 @Controller('instructors')
 export class InstructorController {
   constructor(private readonly instructorService: InstructorService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateInstructorDto })
@@ -34,7 +37,8 @@ export class InstructorController {
     return this.instructorService.create(body);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @ApiBearerAuth()
   @Get()
   @ApiResponse({ type: [CreateInstructorResponseDto] })
@@ -42,7 +46,8 @@ export class InstructorController {
     return this.instructorService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @ApiBearerAuth()
   @Get(':id')
   @ApiResponse({ type: CreateInstructorResponseDto })
@@ -50,7 +55,8 @@ export class InstructorController {
     return this.instructorService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @ApiBearerAuth()
   @Patch(':id')
   @ApiBody({ type: UpdateInstructorDto })
@@ -62,7 +68,8 @@ export class InstructorController {
     return this.instructorService.update(id, updateInstructorDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('Admin')
   @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {
