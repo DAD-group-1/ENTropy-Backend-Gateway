@@ -3,9 +3,11 @@ import { Observable } from 'rxjs';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   CreateStudentDto,
-  Student,
-  UpdateStudentDto,
   CreateStudentResponseDto,
+  PaginationQueryDto,
+  Student,
+  StudentListResponseDto,
+  UpdateStudentDto,
 } from '@dad-group-1/backend-common';
 import { usersServiceClientModuleName } from '../../../helpers/client-modules';
 import { UpdateCommand } from '../../../helpers/commands';
@@ -32,10 +34,10 @@ export class StudentService {
       .pipe(catchRpcException<CreateStudentResponseDto>());
   }
 
-  findAll(): Observable<Student[]> {
-    return this.usersClient.send<Student[], Record<string, unknown>>(
+  findAll(query: PaginationQueryDto): Observable<StudentListResponseDto> {
+    return this.usersClient.send<StudentListResponseDto, PaginationQueryDto>(
       { cmd: 'find_all_students' },
-      {},
+      query,
     );
   }
 

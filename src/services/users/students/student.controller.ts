@@ -1,27 +1,22 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, UseGuards, } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Observable } from 'rxjs';
 import {
   CreateStudentDto,
   CreateStudentResponseDto,
+  PaginationQueryDto,
   Student,
+  StudentListResponseDto,
   UpdateStudentDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
+import { PaginationQuery } from '../../../decorators/pagination.decorators';
 
 @Controller('students')
 export class StudentController {
+  readonly logger = new Logger(StudentController.name);
   constructor(private readonly studentService: StudentService) {}
 
   @UseGuards(JwtAuthGuard)
@@ -39,8 +34,10 @@ export class StudentController {
   @ApiBearerAuth()
   @Get()
   @ApiGlobalResponse(CreateStudentResponseDto)
-  findAll(): Observable<Student[]> {
-    return this.studentService.findAll();
+  findAll(
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<StudentListResponseDto> {
+    return this.studentService.findAll(query);
   }
 
   @UseGuards(JwtAuthGuard)
