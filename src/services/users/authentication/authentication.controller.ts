@@ -5,17 +5,26 @@ import {
   RefreshTokenDto,
   TokenResponseDto,
 } from '@dad-group-1/backend-common';
-import {Body, Controller, Get, HttpStatus, Post, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { throwHttpError } from '../../../helpers/check-utils';
-import {JwtAuthGuard} from "../../../guards/jwt.guard";
-import {ApiBearerAuth} from "@nestjs/swagger";
+import { JwtAuthGuard } from '../../../guards/jwt.guard';
+import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
 
 @Controller('')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
   @Post('logout')
+  @ApiBody({ type: LogoutDto })
+  @ApiResponse({ type: LogoutResponseDto })
   async logout(@Body() body: LogoutDto): Promise<LogoutResponseDto> {
     const result = await this.authenticationService.sendLogout(body);
     if (!result)
@@ -24,6 +33,8 @@ export class AuthenticationController {
   }
 
   @Post('login')
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ type: TokenResponseDto })
   async login(@Body() body: LoginDto): Promise<TokenResponseDto> {
     const result = await this.authenticationService.sendLogin(
       body.email,
@@ -35,6 +46,8 @@ export class AuthenticationController {
   }
 
   @Post('refresh')
+  @ApiBody({ type: RefreshTokenDto })
+  @ApiResponse({ type: TokenResponseDto })
   async refreshToken(@Body() body: RefreshTokenDto): Promise<TokenResponseDto> {
     const result = await this.authenticationService.sendRefreshToken(body);
     if (!result)
