@@ -16,7 +16,8 @@ import {
 import { AuthenticationService } from './authentication.service';
 import { throwHttpError } from '../../../helpers/check-utils';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiGlobalResponse } from '../../../decorators/api.decorators';
 
 @Controller('')
 export class AuthenticationController {
@@ -24,7 +25,7 @@ export class AuthenticationController {
 
   @Post('logout')
   @ApiBody({ type: LogoutDto })
-  @ApiResponse({ type: LogoutResponseDto })
+  @ApiGlobalResponse(LogoutResponseDto)
   async logout(@Body() body: LogoutDto): Promise<LogoutResponseDto> {
     const result = await this.authenticationService.sendLogout(body);
     if (!result)
@@ -34,7 +35,7 @@ export class AuthenticationController {
 
   @Post('login')
   @ApiBody({ type: LoginDto })
-  @ApiResponse({ type: TokenResponseDto })
+  @ApiGlobalResponse(TokenResponseDto)
   async login(@Body() body: LoginDto): Promise<TokenResponseDto> {
     const result = await this.authenticationService.sendLogin(
       body.email,
@@ -47,7 +48,7 @@ export class AuthenticationController {
 
   @Post('refresh')
   @ApiBody({ type: RefreshTokenDto })
-  @ApiResponse({ type: TokenResponseDto })
+  @ApiGlobalResponse(TokenResponseDto)
   async refreshToken(@Body() body: RefreshTokenDto): Promise<TokenResponseDto> {
     const result = await this.authenticationService.sendRefreshToken(body);
     if (!result)
@@ -58,7 +59,7 @@ export class AuthenticationController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get('verify')
-  async verifyToken(): Promise<{}> {
+  verifyToken(): object {
     return {};
   }
 }

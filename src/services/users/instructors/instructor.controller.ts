@@ -17,50 +17,45 @@ import {
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
-import { Roles } from '../../../decorators/roles.decorator';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { Roles, UserRole } from '../../../decorators/roles.decorator';
 import { RolesGuard } from '../../../guards/roles.guard';
+import { ApiGlobalResponse } from '../../../decorators/api.decorators';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('instructors')
 export class InstructorController {
   constructor(private readonly instructorService: InstructorService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('Admin')
-  @ApiBearerAuth()
-  @Post()
+  @ApiGlobalResponse(CreateInstructorResponseDto)
   @ApiBody({ type: CreateInstructorDto })
-  @ApiResponse({ type: CreateInstructorResponseDto })
+  @Roles(UserRole.Admin)
+  @Post()
   create(
     @Body() body: CreateInstructorDto,
   ): Observable<CreateInstructorResponseDto> {
     return this.instructorService.create(body);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('Admin')
-  @ApiBearerAuth()
+  @Roles(UserRole.Admin)
   @Get()
-  @ApiResponse({ type: [CreateInstructorResponseDto] })
+  @ApiGlobalResponse(CreateInstructorResponseDto, true)
   findAll(): Observable<Instructor[]> {
     return this.instructorService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('Admin')
-  @ApiBearerAuth()
+  @Roles(UserRole.Admin)
   @Get(':id')
-  @ApiResponse({ type: CreateInstructorResponseDto })
+  @ApiGlobalResponse(CreateInstructorResponseDto)
   findOne(@Param('id') id: string): Observable<Instructor> {
     return this.instructorService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('Admin')
-  @ApiBearerAuth()
+  @Roles(UserRole.Admin)
   @Patch(':id')
   @ApiBody({ type: UpdateInstructorDto })
-  @ApiResponse({ type: CreateInstructorResponseDto })
+  @ApiGlobalResponse(CreateInstructorResponseDto)
   update(
     @Param('id') id: string,
     @Body() updateInstructorDto: UpdateInstructorDto,
@@ -68,9 +63,7 @@ export class InstructorController {
     return this.instructorService.update(id, updateInstructorDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('Admin')
-  @ApiBearerAuth()
+  @Roles(UserRole.Admin)
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {
     return this.instructorService.remove(id);

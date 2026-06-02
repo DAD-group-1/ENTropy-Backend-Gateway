@@ -56,3 +56,39 @@ export const usersServiceClientModule: DynamicModule = createClientModule(
   usersServiceClientModuleName,
   { defaultPort: 3001 },
 );
+
+export const attendancesServiceClientModuleName = 'ATTENDANCES_SERVICE';
+export const attendancesServiceClientModule: DynamicModule = createClientModule(
+  attendancesServiceClientModuleName,
+  { defaultPort: 3002 },
+);
+
+export const billingServiceClientModuleName = 'BILLING_SERVICE';
+export const billingServiceClientModule: DynamicModule = createClientModule(
+  billingServiceClientModuleName,
+  { defaultPort: 3003 },
+);
+
+export const coursesServiceClientModuleName = 'COURSES_SERVICE';
+export const coursesServiceClientModule: DynamicModule = createClientModule(
+  coursesServiceClientModuleName,
+  { defaultPort: 3004 },
+);
+
+export const enrollmentsServiceClientModuleName = 'ENROLLMENTS_SERVICE';
+export const enrollmentsServiceClientModule: DynamicModule = createClientModule(
+  enrollmentsServiceClientModuleName,
+  { defaultPort: 3005 },
+);
+
+export const infrastructuresServiceClientModuleName = 'INFRASTRUCTURES_SERVICE';
+export const infrastructuresServiceClientModule: DynamicModule =
+  createClientModule(infrastructuresServiceClientModuleName, {
+    defaultPort: 3006,
+  });
+
+export const schedulesServiceClientModuleName = 'SCHEDULES_SERVICE';
+export const schedulesServiceClientModule: DynamicModule = createClientModule(
+  schedulesServiceClientModuleName,
+  { defaultPort: 3007 },
+);

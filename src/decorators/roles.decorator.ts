@@ -2,6 +2,13 @@ import { SetMetadata } from '@nestjs/common';
 
 export const ROLES_KEY = 'roles';
 
+export enum UserRole {
+  Admin = 'Admin',
+  Management = 'Management',
+  Instructor = 'Instructor',
+  Student = 'Student',
+}
+
 /**
  * Decorator that marks a route as requiring specific roles.
  * Use together with RolesGuard (always place JwtAuthGuard before RolesGuard).
@@ -12,5 +19,4 @@ export const ROLES_KEY = 'roles';
  * @Get('protected')
  * someProtectedRoute() {}
  */
-export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
-
+export const Roles = (...roles: UserRole[]) => SetMetadata(ROLES_KEY, roles);

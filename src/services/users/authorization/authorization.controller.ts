@@ -22,43 +22,38 @@ import {
 import { Observable } from 'rxjs';
 import { assertObjectIsNumber } from '../../../helpers/check-utils';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiGlobalResponse } from '../../../decorators/api.decorators';
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('roles')
 export class AuthorizationController {
   constructor(private authorizationService: AuthorizationService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateRoleDto })
-  @ApiResponse({ type: RoleResponseDto })
+  @ApiGlobalResponse(RoleResponseDto)
   create(@Body() body: CreateRoleDto): Observable<RoleResponseDto> {
     return this.authorizationService.create(body);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Get()
-  @ApiResponse({ type: [RoleResponseDto] })
+  @ApiGlobalResponse(RoleResponseDto)
   findAll(): Observable<RoleResponseDto[]> {
     return this.authorizationService.findAll();
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Get(':id')
-  @ApiResponse({ type: RoleResponseDto })
+  @ApiGlobalResponse(RoleResponseDto)
   findOne(@Param('id') id: string): Observable<RoleResponseDto> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     return this.authorizationService.findOne(Number(id));
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Patch(':id')
   @ApiBody({ type: UpdateRoleDto })
-  @ApiResponse({ type: RoleResponseDto })
+  @ApiGlobalResponse(RoleResponseDto)
   update(
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
@@ -67,8 +62,6 @@ export class AuthorizationController {
     return this.authorizationService.update(Number(id), updateRoleDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Delete(':id')
   remove(@Param('id') id: string): Observable<unknown> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
@@ -77,15 +70,15 @@ export class AuthorizationController {
   }
 }
 
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller()
 export class UserRoleController {
   constructor(private authorizationService: AuthorizationService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Post('/users/:id/roles/add')
   @ApiBody({ type: AddRoleToUserDto })
-  @ApiResponse({ type: UserRoleResponseDto })
+  @ApiGlobalResponse(UserRoleResponseDto)
   addRoleToUser(
     @Param('id') id: string,
     @Body() body: AddRoleToUserDto,
@@ -94,8 +87,6 @@ export class UserRoleController {
     return this.authorizationService.addRoleToUser(Number(id), body);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Delete('/users/:id/roles/:roleId/remove')
   removeUserRole(
     @Param('id') id: string,
@@ -106,11 +97,9 @@ export class UserRoleController {
     return this.authorizationService.removeUserRole(Number(id), Number(roleId));
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Put('/users/:id/roles/assign')
   @ApiBody({ type: AssignRolesDto })
-  @ApiResponse({ type: [UserRoleResponseDto] })
+  @ApiGlobalResponse(UserRoleResponseDto)
   assignRoles(
     @Param('id') id: string,
     @Body() body: AssignRolesDto,
@@ -119,10 +108,8 @@ export class UserRoleController {
     return this.authorizationService.assignRoles(Number(id), body);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Get('/users/:id/roles')
-  @ApiResponse({ type: [UserRoleResponseDto] })
+  @ApiGlobalResponse(UserRoleResponseDto)
   getUserRoles(@Param('id') id: string): Observable<UserRoleResponseDto[]> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     return this.authorizationService.getUserRoles(Number(id));
