@@ -17,6 +17,7 @@ import { CampusModule } from './services/infrastructures/campuses/campus.module'
 import { RoomTypeModule } from './services/infrastructures/room-types/room-type.module';
 import { RoomModule } from './services/infrastructures/rooms/room.module';
 import { ScheduleModule } from './services/schedules/schedules/schedule.module';
+import { NotificationsModule } from './services/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ScheduleModule } from './services/schedules/schedules/schedule.module';
     AuthenticationModule,
     AuthorizationModule,
     AttendanceModule,
+    NotificationsModule,
   ],
   providers: [JwtStrategy],
 })

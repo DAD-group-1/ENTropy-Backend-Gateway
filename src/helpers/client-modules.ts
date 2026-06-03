@@ -57,6 +57,12 @@ export const usersServiceClientModule: DynamicModule = createClientModule(
   { defaultPort: 3001 },
 );
 
+export const notificationsServiceClientModuleName = 'NOTIFICATIONS_SERVICE';
+export const notificationsServiceClientModule: DynamicModule =
+  createClientModule(notificationsServiceClientModuleName, {
+    defaultPort: 3010,
+  });
+
 export const attendancesServiceClientModuleName = 'ATTENDANCES_SERVICE';
 export const attendancesServiceClientModule: DynamicModule = createClientModule(
   attendancesServiceClientModuleName,
