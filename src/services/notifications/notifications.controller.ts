@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, } from '@nestjs/common';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
@@ -23,7 +12,7 @@ import {
   UpdateNotificationDto,
 } from '@dad-group-1/backend-common';
 import { ApiGlobalResponse } from '../../decorators/api.decorators';
-import { PaginationPipe } from '../../pipes/pagination.pipe';
+import { PaginationQuery } from '../../decorators/pagination.decorators';
 
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
@@ -48,7 +37,7 @@ export class NotificationsController {
   })
   @Get()
   @ApiGlobalResponse(GetNotificationListResponseDto)
-  findAll(@Query(new PaginationPipe()) query: PaginationQueryDto) {
+  findAll(@PaginationQuery() query: PaginationQueryDto) {
     console.log(query);
     return this.notificationsService.findAll(query);
   }
@@ -62,7 +51,7 @@ export class NotificationsController {
   @ApiGlobalResponse(GetNotificationListResponseDto)
   findAllForUser(
     @Param('userId', ParseIntPipe) userId: number,
-    @Query(new PaginationPipe()) query: PaginationQueryDto,
+    @PaginationQuery() query: PaginationQueryDto,
   ) {
     return this.notificationsService.findAllForUser(userId, query);
   }
