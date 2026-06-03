@@ -1,4 +1,4 @@
 export interface UpdateCommand<T> {
-  id: number;
+  id: number | string;
   updateData: T;
 }

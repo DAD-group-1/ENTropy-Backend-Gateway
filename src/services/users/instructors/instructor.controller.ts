@@ -14,6 +14,7 @@ import {
   CreateInstructorDto,
   CreateInstructorResponseDto,
   Instructor,
+  InstructorResponseDto,
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
@@ -40,14 +41,14 @@ export class InstructorController {
 
   @Roles(UserRole.Admin)
   @Get()
-  @ApiGlobalResponse(CreateInstructorResponseDto, true)
+  @ApiGlobalResponse(InstructorResponseDto, true)
   findAll(): Observable<Instructor[]> {
     return this.instructorService.findAll();
   }
 
   @Roles(UserRole.Admin)
   @Get(':id')
-  @ApiGlobalResponse(CreateInstructorResponseDto)
+  @ApiGlobalResponse(InstructorResponseDto)
   findOne(@Param('id') id: string): Observable<Instructor> {
     return this.instructorService.findOne(id);
   }

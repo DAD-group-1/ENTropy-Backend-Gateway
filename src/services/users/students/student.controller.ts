@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, UseGuards, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { StudentService } from './student.service';
 import { Observable } from 'rxjs';
 import {
@@ -7,6 +17,7 @@ import {
   PaginationQueryDto,
   Student,
   StudentListResponseDto,
+  StudentResponseDto,
   UpdateStudentDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
@@ -33,7 +44,7 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
-  @ApiGlobalResponse(CreateStudentResponseDto)
+  @ApiGlobalResponse(StudentListResponseDto)
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<StudentListResponseDto> {
@@ -43,7 +54,7 @@ export class StudentController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
-  @ApiGlobalResponse(CreateStudentResponseDto)
+  @ApiGlobalResponse(StudentResponseDto)
   findOne(@Param('id') id: string): Observable<Student> {
     return this.studentService.findOne(id);
   }
