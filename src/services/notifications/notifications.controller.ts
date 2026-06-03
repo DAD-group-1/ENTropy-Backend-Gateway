@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
 import {
   CreateNotificationDto,
@@ -34,10 +34,18 @@ export class NotificationsController {
   @Post()
   @ApiBody({ type: CreateNotificationDto })
   @ApiGlobalResponse(NotificationResponseDto)
+  @ApiOperation({
+    summary: 'Create a new notification record',
+    description: 'Add a new notification record to the system.',
+  })
   create(@Body() body: CreateNotificationDto) {
     return this.notificationsService.create(body);
   }
 
+  @ApiOperation({
+    summary: 'Get a list of notifications',
+    description: 'Retrieve a paginated list of notifications.',
+  })
   @Get()
   @ApiGlobalResponse(GetNotificationListResponseDto)
   findAll(@Query(new PaginationPipe()) query: PaginationQueryDto) {
@@ -45,6 +53,11 @@ export class NotificationsController {
     return this.notificationsService.findAll(query);
   }
 
+  @ApiOperation({
+    summary: 'Get notifications for a specific user',
+    description:
+      'Retrieve a paginated list of notifications for a specific user.',
+  })
   @Get('/user/:userId')
   @ApiGlobalResponse(GetNotificationListResponseDto)
   findAllForUser(
@@ -54,12 +67,20 @@ export class NotificationsController {
     return this.notificationsService.findAllForUser(userId, query);
   }
 
+  @ApiOperation({
+    summary: 'Get a notification by ID',
+    description: 'Retrieve a single notification by its unique ID.',
+  })
   @Get(':id')
   @ApiGlobalResponse(GetNotificationResponseDto)
   findOne(@Param('id') id: string) {
     return this.notificationsService.findOne(id);
   }
 
+  @ApiOperation({
+    summary: 'Update a notification',
+    description: 'Update the details of an existing notification.',
+  })
   @Patch(':id')
   @ApiBody({ type: UpdateNotificationDto })
   @ApiGlobalResponse(NotificationResponseDto)
@@ -70,6 +91,10 @@ export class NotificationsController {
     return this.notificationsService.update(id, updateNotificationDto);
   }
 
+  @ApiOperation({
+    summary: 'Delete a notification',
+    description: 'Remove a notification from the system by its unique ID.',
+  })
   @Delete(':id')
   @ApiGlobalResponse(DeleteNotificationResponseDto)
   remove(@Param('id') id: string) {

@@ -14,14 +14,17 @@ import {
   CreateInstructorDto,
   CreateInstructorResponseDto,
   Instructor,
+  InstructorListResponseDto,
   InstructorResponseDto,
+  PaginationQueryDto,
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { Roles, UserRole } from '../../../decorators/roles.decorator';
 import { RolesGuard } from '../../../guards/roles.guard';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
+import { PaginationQuery } from '../../../decorators/pagination.decorators';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -33,19 +36,35 @@ export class InstructorController {
   @ApiBody({ type: CreateInstructorDto })
   @Roles(UserRole.Admin)
   @Post()
+  @ApiOperation({
+    summary: 'Create a new instructor',
+    description:
+      'Add a new instructor to the system with the provided details.',
+  })
   create(
     @Body() body: CreateInstructorDto,
   ): Observable<CreateInstructorResponseDto> {
     return this.instructorService.create(body);
   }
 
+  @ApiOperation({
+    summary: 'Get a list of all instructors',
+    description: 'Retrieve a paginated list of all instructors in the system.',
+  })
   @Roles(UserRole.Admin)
   @Get()
-  @ApiGlobalResponse(InstructorResponseDto, true)
-  findAll(): Observable<Instructor[]> {
-    return this.instructorService.findAll();
+  @ApiGlobalResponse(InstructorListResponseDto)
+  findAll(
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<InstructorListResponseDto> {
+    return this.instructorService.findAll(query);
   }
 
+  @ApiOperation({
+    summary: 'Get a specific instructor by ID',
+    description:
+      'Retrieve detailed information about a specific instructor using their unique ID.',
+  })
   @Roles(UserRole.Admin)
   @Get(':id')
   @ApiGlobalResponse(InstructorResponseDto)
@@ -53,6 +72,11 @@ export class InstructorController {
     return this.instructorService.findOne(id);
   }
 
+  @ApiOperation({
+    summary: 'Update an existing instructor',
+    description:
+      'Modify the details of an existing instructor using their unique ID.',
+  })
   @Roles(UserRole.Admin)
   @Patch(':id')
   @ApiBody({ type: UpdateInstructorDto })
@@ -64,6 +88,10 @@ export class InstructorController {
     return this.instructorService.update(id, updateInstructorDto);
   }
 
+  @ApiOperation({
+    summary: 'Delete an instructor',
+    description: 'Remove an instructor from the system using their unique ID.',
+  })
   @Roles(UserRole.Admin)
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {

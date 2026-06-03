@@ -3,7 +3,9 @@ import { Observable } from 'rxjs';
 import {
   CreateGradeRequestDto,
   Grade,
+  GradeListResponseDto,
   GradeResponseDto,
+  PaginationQueryDto,
   UpdateGradeDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -30,10 +32,10 @@ export class GradeService {
       .pipe(catchRpcException<GradeResponseDto>());
   }
 
-  findAll(): Observable<Grade[]> {
-    return this.gradesClient.send<GradeResponseDto[], null>(
+  findAll(query: PaginationQueryDto): Observable<GradeListResponseDto> {
+    return this.gradesClient.send<GradeListResponseDto, PaginationQueryDto>(
       { cmd: 'find_all_grades' },
-      null,
+      query,
     );
   }
 

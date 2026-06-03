@@ -2,7 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   CreateRoomRequestDto,
+  PaginationQueryDto,
   Room,
+  RoomListResponseDto,
   RoomResponseDto,
   UpdateRoomDto,
 } from '@dad-group-1/backend-common';
@@ -30,10 +32,10 @@ export class RoomService {
       .pipe(catchRpcException<RoomResponseDto>());
   }
 
-  findAll(): Observable<Room[]> {
-    return this.roomsClient.send<RoomResponseDto[], null>(
+  findAll(query: PaginationQueryDto): Observable<RoomListResponseDto> {
+    return this.roomsClient.send<RoomListResponseDto, PaginationQueryDto>(
       { cmd: 'find_all_rooms' },
-      null,
+      query,
     );
   }
 

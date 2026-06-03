@@ -10,14 +10,17 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
+  CampusListResponseDto,
   CampusResponseDto,
   CreateCampusRequestDto,
+  PaginationQueryDto,
   UpdateCampusDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { CampusService } from './campus.service';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
+import { PaginationQuery } from '../../../decorators/pagination.decorators';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -28,24 +31,42 @@ export class CampusController {
   @Post()
   @ApiBody({ type: CreateCampusRequestDto })
   @ApiGlobalResponse(CampusResponseDto)
+  @ApiOperation({
+    summary: 'Create a new campus record',
+    description: 'Add a new campus record to the system.',
+  })
   create(
     @Body() createCampusDto: CreateCampusRequestDto,
   ): Observable<CampusResponseDto> {
     return this.campusService.create(createCampusDto);
   }
 
+  @ApiOperation({
+    summary: 'Get all campuses',
+    description: 'Retrieve a list of all campuses with pagination support.',
+  })
   @Get()
-  @ApiGlobalResponse(CampusResponseDto, true)
-  findAll(): Observable<CampusResponseDto[]> {
-    return this.campusService.findAll();
+  @ApiGlobalResponse(CampusListResponseDto)
+  findAll(
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<CampusListResponseDto> {
+    return this.campusService.findAll(query);
   }
 
+  @ApiOperation({
+    summary: 'Get a campus by ID',
+    description: 'Retrieve a single campus record by its unique ID.',
+  })
   @Get(':id')
   @ApiGlobalResponse(CampusResponseDto)
   findOne(@Param('id') id: string): Observable<CampusResponseDto> {
     return this.campusService.findOne(id);
   }
 
+  @ApiOperation({
+    summary: 'Update a campus record',
+    description: 'Update an existing campus record by its unique ID.',
+  })
   @Patch(':id')
   @ApiBody({ type: UpdateCampusDto })
   @ApiGlobalResponse(CampusResponseDto)
@@ -56,6 +77,10 @@ export class CampusController {
     return this.campusService.update(id, updateCampusDto);
   }
 
+  @ApiOperation({
+    summary: 'Delete a campus record',
+    description: 'Remove an existing campus record by its unique ID.',
+  })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
     return this.campusService.remove(id);

@@ -21,28 +21,34 @@ import {
   UpdateStudentDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
 import { PaginationQuery } from '../../../decorators/pagination.decorators';
 
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('students')
 export class StudentController {
   readonly logger = new Logger(StudentController.name);
   constructor(private readonly studentService: StudentService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @Post()
   @ApiBody({ type: CreateStudentDto })
   @ApiGlobalResponse(CreateStudentResponseDto)
+  @ApiOperation({
+    summary: 'Create a new student record',
+    description: 'Add a new student record to the system.',
+  })
   create(
     @Body() createStudentDto: CreateStudentDto,
   ): Observable<CreateStudentResponseDto> {
     return this.studentService.create(createStudentDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get all student records',
+    description: 'Retrieve a list of all student records in the system.',
+  })
   @Get()
   @ApiGlobalResponse(StudentListResponseDto)
   findAll(
@@ -51,16 +57,20 @@ export class StudentController {
     return this.studentService.findAll(query);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get a student record by ID',
+    description: 'Retrieve a single student record by its unique ID.',
+  })
   @Get(':id')
   @ApiGlobalResponse(StudentResponseDto)
   findOne(@Param('id') id: string): Observable<Student> {
     return this.studentService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Update a student record',
+    description: 'Update an existing student record by its unique ID.',
+  })
   @Patch(':id')
   @ApiBody({ type: UpdateStudentDto })
   @ApiGlobalResponse(CreateStudentResponseDto)
@@ -71,8 +81,10 @@ export class StudentController {
     return this.studentService.update(id, updateStudentDto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete a student record',
+    description: 'Remove a student record from the system by its unique ID.',
+  })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
     return this.studentService.remove(id);

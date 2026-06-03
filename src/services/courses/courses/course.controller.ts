@@ -10,14 +10,17 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
+  CourseListResponseDto,
   CourseResponseDto,
   CreateCourseDto,
+  PaginationQueryDto,
   UpdateCourseDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { CourseService } from './course.service';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
+import { PaginationQuery } from '../../../decorators/pagination.decorators';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -28,24 +31,42 @@ export class CourseController {
   @Post()
   @ApiBody({ type: CreateCourseDto })
   @ApiGlobalResponse(CourseResponseDto)
+  @ApiOperation({
+    summary: 'Create a new course record',
+    description: 'Add a new course record to the system.',
+  })
   create(
     @Body() createCourseDto: CreateCourseDto,
   ): Observable<CourseResponseDto> {
     return this.courseService.create(createCourseDto);
   }
 
+  @ApiOperation({
+    summary: 'Get a list of courses',
+    description: 'Retrieve a paginated list of courses from the system.',
+  })
   @Get()
-  @ApiGlobalResponse(CourseResponseDto, true)
-  findAll(): Observable<CourseResponseDto[]> {
-    return this.courseService.findAll();
+  @ApiGlobalResponse(CourseListResponseDto)
+  findAll(
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<CourseListResponseDto> {
+    return this.courseService.findAll(query);
   }
 
+  @ApiOperation({
+    summary: 'Get a course by ID',
+    description: 'Retrieve a single course record by its unique ID.',
+  })
   @Get(':id')
   @ApiGlobalResponse(CourseResponseDto)
   findOne(@Param('id') id: string): Observable<CourseResponseDto> {
     return this.courseService.findOne(id);
   }
 
+  @ApiOperation({
+    summary: 'Update a course by ID',
+    description: 'Update an existing course record by its unique ID.',
+  })
   @Patch(':id')
   @ApiBody({ type: UpdateCourseDto })
   @ApiGlobalResponse(CourseResponseDto)
@@ -56,6 +77,10 @@ export class CourseController {
     return this.courseService.update(id, updateCourseDto);
   }
 
+  @ApiOperation({
+    summary: 'Delete a course by ID',
+    description: 'Remove a course record from the system by its unique ID.',
+  })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
     return this.courseService.remove(id);

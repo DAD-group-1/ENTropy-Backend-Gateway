@@ -3,7 +3,9 @@ import { Observable } from 'rxjs';
 import {
   CreateEnrollmentRequestDto,
   Enrollment,
+  EnrollmentListResponseDto,
   EnrollmentResponseDto,
+  PaginationQueryDto,
   UpdateEnrollmentDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -32,11 +34,11 @@ export class EnrollmentService {
       .pipe(catchRpcException<EnrollmentResponseDto>());
   }
 
-  findAll(): Observable<Enrollment[]> {
-    return this.enrollmentsClient.send<EnrollmentResponseDto[], null>(
-      { cmd: 'find_all_enrollments' },
-      null,
-    );
+  findAll(query: PaginationQueryDto): Observable<EnrollmentListResponseDto> {
+    return this.enrollmentsClient.send<
+      EnrollmentListResponseDto,
+      PaginationQueryDto
+    >({ cmd: 'find_all_enrollments' }, query);
   }
 
   findOne(id: string): Observable<EnrollmentResponseDto> {

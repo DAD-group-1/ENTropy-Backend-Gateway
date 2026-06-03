@@ -2,7 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   CreatePaymentRequestDto,
+  PaginationQueryDto,
   Payment,
+  PaymentListResponseDto,
   PaymentResponseDto,
   UpdatePaymentDto,
 } from '@dad-group-1/backend-common';
@@ -32,10 +34,10 @@ export class PaymentService {
       .pipe(catchRpcException<PaymentResponseDto>());
   }
 
-  findAll(): Observable<Payment[]> {
-    return this.billingClient.send<Payment[], null>(
+  findAll(query: PaginationQueryDto): Observable<PaymentListResponseDto> {
+    return this.billingClient.send<PaymentListResponseDto, PaginationQueryDto>(
       { cmd: 'find_all_payments' },
-      null,
+      query,
     );
   }
 

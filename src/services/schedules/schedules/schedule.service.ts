@@ -2,7 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   CreateScheduleRequestDto,
+  PaginationQueryDto,
   Schedule,
+  ScheduleListResponseDto,
   ScheduleResponseDto,
   UpdateScheduleDto,
 } from '@dad-group-1/backend-common';
@@ -32,11 +34,11 @@ export class ScheduleService {
       .pipe(catchRpcException<ScheduleResponseDto>());
   }
 
-  findAll(): Observable<Schedule[]> {
-    return this.schedulesClient.send<ScheduleResponseDto[], null>(
-      { cmd: 'find_all_schedules' },
-      null,
-    );
+  findAll(query: PaginationQueryDto): Observable<ScheduleListResponseDto> {
+    return this.schedulesClient.send<
+      ScheduleListResponseDto,
+      PaginationQueryDto
+    >({ cmd: 'find_all_schedules' }, query);
   }
 
   findOne(id: string): Observable<ScheduleResponseDto> {

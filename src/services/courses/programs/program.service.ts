@@ -2,6 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   CreateProgramRequestDto,
+  PaginationQueryDto,
+  ProgramListResponseDto,
   ProgramResponseDto,
   UpdateProgramDto,
 } from '@dad-group-1/backend-common';
@@ -31,10 +33,10 @@ export class ProgramService {
       .pipe(catchRpcException<ProgramResponseDto>());
   }
 
-  findAll(): Observable<ProgramResponseDto[]> {
-    return this.billingClient.send<ProgramResponseDto[], null>(
+  findAll(query: PaginationQueryDto): Observable<ProgramListResponseDto> {
+    return this.billingClient.send<ProgramListResponseDto, PaginationQueryDto>(
       { cmd: 'find_all_programs' },
-      null,
+      query,
     );
   }
 

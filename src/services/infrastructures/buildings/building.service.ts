@@ -2,8 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   Building,
+  BuildingListResponseDto,
   BuildingResponseDto,
   CreateBuildingRequestDto,
+  PaginationQueryDto,
   UpdateBuildingDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -32,11 +34,11 @@ export class BuildingService {
       .pipe(catchRpcException<BuildingResponseDto>());
   }
 
-  findAll(): Observable<Building[]> {
-    return this.buildingsClient.send<BuildingResponseDto[], null>(
-      { cmd: 'find_all_buildings' },
-      null,
-    );
+  findAll(query: PaginationQueryDto): Observable<BuildingListResponseDto> {
+    return this.buildingsClient.send<
+      BuildingListResponseDto,
+      PaginationQueryDto
+    >({ cmd: 'find_all_buildings' }, query);
   }
 
   findOne(id: string): Observable<BuildingResponseDto> {

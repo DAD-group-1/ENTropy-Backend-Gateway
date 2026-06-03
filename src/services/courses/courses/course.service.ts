@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
+  CourseListResponseDto,
   CourseResponseDto,
   CreateCourseRequestDto,
+  PaginationQueryDto,
   UpdateCourseDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -31,10 +33,10 @@ export class CourseService {
       .pipe(catchRpcException<CourseResponseDto>());
   }
 
-  findAll(): Observable<CourseResponseDto[]> {
-    return this.billingClient.send<CourseResponseDto[], null>(
+  findAll(query: PaginationQueryDto): Observable<CourseListResponseDto> {
+    return this.billingClient.send<CourseListResponseDto, PaginationQueryDto>(
       { cmd: 'find_all_courses' },
-      null,
+      query,
     );
   }
 

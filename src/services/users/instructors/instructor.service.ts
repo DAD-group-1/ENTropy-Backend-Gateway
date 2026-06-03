@@ -5,6 +5,8 @@ import {
   CreateInstructorDto,
   CreateInstructorResponseDto,
   Instructor,
+  InstructorListResponseDto,
+  PaginationQueryDto,
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
@@ -30,8 +32,11 @@ export class InstructorService {
       .pipe(catchRpcException<CreateInstructorResponseDto>());
   }
 
-  findAll(): Observable<Instructor[]> {
-    return this.usersClient.send({ cmd: 'find_all_instructors' }, {});
+  findAll(query: PaginationQueryDto): Observable<InstructorListResponseDto> {
+    return this.usersClient.send<InstructorListResponseDto, PaginationQueryDto>(
+      { cmd: 'find_all_instructors' },
+      query,
+    );
   }
 
   findOne(id: string): Observable<Instructor> {

@@ -22,7 +22,7 @@ import {
 import { Observable } from 'rxjs';
 import { assertObjectIsNumber } from '../../../helpers/check-utils';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
 
 @UseGuards(JwtAuthGuard)
@@ -34,16 +34,28 @@ export class AuthorizationController {
   @Post()
   @ApiBody({ type: CreateRoleDto })
   @ApiGlobalResponse(RoleResponseDto)
+  @ApiOperation({
+    summary: 'Create a new role',
+    description: 'Add a new role to the system.',
+  })
   create(@Body() body: CreateRoleDto): Observable<RoleResponseDto> {
     return this.authorizationService.create(body);
   }
 
+  @ApiOperation({
+    summary: 'Get all roles',
+    description: 'Retrieve a list of all roles in the system.',
+  })
   @Get()
   @ApiGlobalResponse(RoleResponseDto)
   findAll(): Observable<RoleResponseDto[]> {
     return this.authorizationService.findAll();
   }
 
+  @ApiOperation({
+    summary: 'Get role by ID',
+    description: 'Retrieve a specific role by its ID.',
+  })
   @Get(':id')
   @ApiGlobalResponse(RoleResponseDto)
   findOne(@Param('id') id: string): Observable<RoleResponseDto> {
@@ -51,6 +63,10 @@ export class AuthorizationController {
     return this.authorizationService.findOne(Number(id));
   }
 
+  @ApiOperation({
+    summary: 'Update role',
+    description: 'Update the details of an existing role.',
+  })
   @Patch(':id')
   @ApiBody({ type: UpdateRoleDto })
   @ApiGlobalResponse(RoleResponseDto)
@@ -62,6 +78,10 @@ export class AuthorizationController {
     return this.authorizationService.update(Number(id), updateRoleDto);
   }
 
+  @ApiOperation({
+    summary: 'Delete role',
+    description: 'Remove a role from the system.',
+  })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<unknown> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
@@ -76,6 +96,10 @@ export class AuthorizationController {
 export class UserRoleController {
   constructor(private authorizationService: AuthorizationService) {}
 
+  @ApiOperation({
+    summary: 'Add role to user',
+    description: 'Assign a specific role to a user.',
+  })
   @Post('/users/:id/roles/add')
   @ApiBody({ type: AddRoleToUserDto })
   @ApiGlobalResponse(UserRoleResponseDto)
@@ -87,6 +111,10 @@ export class UserRoleController {
     return this.authorizationService.addRoleToUser(Number(id), body);
   }
 
+  @ApiOperation({
+    summary: 'Remove role from user',
+    description: 'Remove a specific role from a user.',
+  })
   @Delete('/users/:id/roles/:roleId/remove')
   removeUserRole(
     @Param('id') id: string,
@@ -97,6 +125,10 @@ export class UserRoleController {
     return this.authorizationService.removeUserRole(Number(id), Number(roleId));
   }
 
+  @ApiOperation({
+    summary: 'Assign roles to user',
+    description: 'Assign multiple roles to a user, replacing existing roles.',
+  })
   @Put('/users/:id/roles/assign')
   @ApiBody({ type: AssignRolesDto })
   @ApiGlobalResponse(UserRoleResponseDto)
@@ -108,6 +140,10 @@ export class UserRoleController {
     return this.authorizationService.assignRoles(Number(id), body);
   }
 
+  @ApiOperation({
+    summary: 'Get user roles',
+    description: 'Retrieve all roles assigned to a specific user.',
+  })
   @Get('/users/:id/roles')
   @ApiGlobalResponse(UserRoleResponseDto)
   getUserRoles(@Param('id') id: string): Observable<UserRoleResponseDto[]> {

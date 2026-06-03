@@ -2,8 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   Attendance,
+  AttendanceListResponseDto,
   AttendanceResponseDto,
   CreateAttendanceRequestDto,
+  PaginationQueryDto,
   UpdateAttendanceDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -32,11 +34,11 @@ export class AttendanceService {
       .pipe(catchRpcException<AttendanceResponseDto>());
   }
 
-  findAll(): Observable<Attendance[]> {
-    return this.attendancesClient.send<AttendanceResponseDto[], null>(
-      { cmd: 'find_all_attendances' },
-      null,
-    );
+  findAll(query: PaginationQueryDto): Observable<AttendanceListResponseDto> {
+    return this.attendancesClient.send<
+      AttendanceListResponseDto,
+      PaginationQueryDto
+    >({ cmd: 'find_all_attendances' }, query);
   }
 
   findOne(id: string): Observable<AttendanceResponseDto> {
