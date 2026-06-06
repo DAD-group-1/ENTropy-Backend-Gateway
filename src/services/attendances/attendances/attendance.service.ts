@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   Attendance,
@@ -18,6 +18,7 @@ import { UpdateCommand } from '../../../helpers/commands';
 
 @Injectable()
 export class AttendanceService {
+  private readonly logger = new Logger(AttendanceService.name);
   constructor(
     @Inject(attendancesServiceClientModuleName)
     private readonly attendancesClient: ClientProxy,

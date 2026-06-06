@@ -47,7 +47,6 @@ export class PaymentMethodController {
       'Retrieve a list of all payment methods with pagination support.',
   })
   @Get()
-  @ApiBody({ type: CreatePaymentMethodDto })
   @ApiGlobalResponse(PaymentMethodListResponseDto)
   findAll(
     @PaginationQuery() query: PaginationQueryDto,

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('attendances')
 export class AttendanceController {
+  private readonly logger = new Logger(AttendanceController.name);
   constructor(private readonly attendanceService: AttendanceService) {}
 
   @Post()

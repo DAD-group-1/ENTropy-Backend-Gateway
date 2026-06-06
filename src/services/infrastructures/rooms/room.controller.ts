@@ -46,7 +46,6 @@ export class RoomController {
     description: 'Retrieve a paginated list of rooms from the system.',
   })
   @Get()
-  @ApiBody({ type: CreateRoomRequestDto })
   @ApiGlobalResponse(RoomListResponseDto)
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
