@@ -16,12 +16,15 @@ import {
 
 import { UpdateCommand } from '../../helpers/commands';
 import { catchRpcException } from '../../helpers/check-utils';
+import { tap } from 'rxjs';
+import { WebsocketGateway } from '../../websocket/websocket.gateway';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @Inject(notificationsServiceClientModuleName)
     private readonly notificationsClient: ClientProxy,
+    private readonly websocketGateway: WebsocketGateway,
   ) {}
 
   create(createNotificationDto: CreateNotificationDto) {
@@ -30,7 +33,16 @@ export class NotificationsService {
         NotificationResponseDto,
         CreateNotificationDto
       >({ cmd: 'create_notification' }, createNotificationDto)
-      .pipe(catchRpcException<NotificationResponseDto>());
+      .pipe(
+        tap((notification) => {
+          this.websocketGateway.emitToUser(
+            notification.user_id,
+            'notification:new',
+            notification,
+          );
+        }),
+        catchRpcException<NotificationResponseDto>(),
+      );
   }
 
   findAll(query: PaginationQueryDto) {

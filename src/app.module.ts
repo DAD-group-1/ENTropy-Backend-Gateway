@@ -18,6 +18,7 @@ import { RoomTypeModule } from './services/infrastructures/room-types/room-type.
 import { RoomModule } from './services/infrastructures/rooms/room.module';
 import { ScheduleModule } from './services/schedules/schedules/schedule.module';
 import { NotificationsModule } from './services/notifications/notifications.module';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { NotificationsModule } from './services/notifications/notifications.modu
     AuthorizationModule,
     AttendanceModule,
     NotificationsModule,
+    WebsocketModule,
   ],
   providers: [JwtStrategy],
 })
