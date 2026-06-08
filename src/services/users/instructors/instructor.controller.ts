@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, } from '@nestjs/common';
 import { InstructorService } from './instructor.service';
 import { Observable } from 'rxjs';
 import {
@@ -51,7 +42,7 @@ export class InstructorController {
     summary: 'Get a list of all instructors',
     description: 'Retrieve a paginated list of all instructors in the system.',
   })
-  @Roles(UserRole.Admin)
+  @Roles(UserRole.Instructor, UserRole.Admin)
   @Get()
   @ApiGlobalResponse(InstructorListResponseDto)
   findAll(
@@ -65,7 +56,7 @@ export class InstructorController {
     description:
       'Retrieve detailed information about a specific instructor using their unique ID.',
   })
-  @Roles(UserRole.Admin)
+  @Roles(UserRole.Instructor, UserRole.Admin)
   @Get(':id')
   @ApiGlobalResponse(InstructorResponseDto)
   findOne(@Param('id') id: string): Observable<Instructor> {

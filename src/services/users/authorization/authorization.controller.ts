@@ -12,11 +12,13 @@ import {
 import { AuthorizationService } from './authorization.service';
 import {
   AddRoleToUserDto,
+  AssignRoleRequestDto,
   AssignRolesDto,
   CreateRoleDto,
   DeleteRoleDto,
   RoleResponseDto,
   UpdateRoleDto,
+  UserResponseDto,
   UserRoleResponseDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
@@ -96,7 +98,7 @@ export class AuthorizationController {
 export class UserRoleController {
   constructor(private authorizationService: AuthorizationService) {}
 
-  @ApiOperation({
+  /*@ApiOperation({
     summary: 'Add role to user',
     description: 'Assign a specific role to a user.',
   })
@@ -109,9 +111,9 @@ export class UserRoleController {
   ): Observable<UserRoleResponseDto> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     return this.authorizationService.addRoleToUser(Number(id), body);
-  }
+  }*/
 
-  @ApiOperation({
+  /*@ApiOperation({
     summary: 'Remove role from user',
     description: 'Remove a specific role from a user.',
   })
@@ -123,9 +125,9 @@ export class UserRoleController {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     assertObjectIsNumber(roleId, `Invalid ID: '${roleId}' is not a number`);
     return this.authorizationService.removeUserRole(Number(id), Number(roleId));
-  }
+  }*/
 
-  @ApiOperation({
+  /*@ApiOperation({
     summary: 'Assign roles to user',
     description: 'Assign multiple roles to a user, replacing existing roles.',
   })
@@ -138,9 +140,24 @@ export class UserRoleController {
   ): Observable<UserRoleResponseDto[]> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     return this.authorizationService.assignRoles(Number(id), body);
-  }
+  }*/
 
   @ApiOperation({
+    summary: 'Assign role to user',
+    description: 'Assign role to a user, replacing existing role.',
+  })
+  @Put('/users/:id/roles/assign')
+  @ApiBody({ type: AssignRoleRequestDto })
+  @ApiGlobalResponse(UserResponseDto)
+  assignRole(
+    @Param('id') id: string,
+    @Body() body: { role_id: number },
+  ): Observable<UserResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    return this.authorizationService.assignRole(Number(id), body);
+  }
+
+  /*@ApiOperation({
     summary: 'Get user roles',
     description: 'Retrieve all roles assigned to a specific user.',
   })
@@ -149,5 +166,16 @@ export class UserRoleController {
   getUserRoles(@Param('id') id: string): Observable<UserRoleResponseDto[]> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     return this.authorizationService.getUserRoles(Number(id));
+  }*/
+
+  @ApiOperation({
+    summary: 'Get user role',
+    description: 'Retrieve the role assigned to a specific user.',
+  })
+  @Get('/users/:id/role')
+  @ApiGlobalResponse(RoleResponseDto)
+  getUserRole(@Param('id') id: string): Observable<RoleResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    return this.authorizationService.getUserRole(Number(id));
   }
 }

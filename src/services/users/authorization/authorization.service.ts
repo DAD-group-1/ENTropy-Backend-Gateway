@@ -3,6 +3,7 @@ import { usersServiceClientModuleName } from '../../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   AddRoleToUserDto,
+  AssignRoleRequestDto,
   AssignRolesDto,
   CreateRoleDto,
   CreateUserRoleRequestDto,
@@ -11,6 +12,7 @@ import {
   GetUserRoleDto,
   RoleResponseDto,
   UpdateRoleDto,
+  UserResponseDto,
   UserRoleResponseDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
@@ -102,13 +104,26 @@ export class AuthorizationService {
       .pipe(catchRpcException<UserRoleResponseDto[]>());
   }
 
-  getUserRoles(userId: number): Observable<UserRoleResponseDto[]> {
-    const payload: GetUserRoleDto = { user_id: userId };
+  assignRole(
+    userId: number,
+    body: AssignRoleRequestDto,
+  ): Observable<UserResponseDto> {
+    const payload = {
+      user_id: userId,
+      role_id: body.role_id,
+    };
     return this.usersClient
       .send<
-        UserRoleResponseDto[],
-        GetUserRoleDto
-      >({ cmd: 'get_user_roles' }, payload)
-      .pipe(catchRpcException<UserRoleResponseDto[]>());
+        UserResponseDto,
+        { user_id: number; role_id: number }
+      >({ cmd: 'assign_role_to_user' }, payload)
+      .pipe(catchRpcException<UserResponseDto>());
+  }
+
+  getUserRole(userId: number): Observable<RoleResponseDto> {
+    const payload: GetUserRoleDto = { user_id: userId };
+    return this.usersClient
+      .send<RoleResponseDto, GetUserRoleDto>({ cmd: 'get_user_role' }, payload)
+      .pipe(catchRpcException<RoleResponseDto>());
   }
 }
