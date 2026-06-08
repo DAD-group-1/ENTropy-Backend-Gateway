@@ -28,7 +28,6 @@ export class RolesGuard implements CanActivate {
     const user = request.user;
 
     if (!user?.data.role) {
-      console.log(user);
       throw new ForbiddenException('Access denied: no roles assigned');
     }
 
