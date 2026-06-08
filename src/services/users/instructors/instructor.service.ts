@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { usersServiceClientModuleName } from '../../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
 import {
-  CreateInstructorDto,
+  CreateInstructorRequestDto,
   CreateInstructorResponseDto,
-  Instructor,
   InstructorListResponseDto,
+  InstructorResponseDto,
   PaginationQueryDto,
   UpdateInstructorDto,
 } from '@dad-group-1/backend-common';
@@ -23,11 +23,11 @@ export class InstructorService {
     private readonly usersClient: ClientProxy,
   ) {}
 
-  create(createInstructorDto: CreateInstructorDto) {
+  create(createInstructorDto: CreateInstructorRequestDto) {
     return this.usersClient
       .send<
         CreateInstructorResponseDto,
-        CreateInstructorDto
+        CreateInstructorRequestDto
       >({ cmd: 'create_instructor' }, createInstructorDto)
       .pipe(catchRpcException<CreateInstructorResponseDto>());
   }
@@ -39,23 +39,29 @@ export class InstructorService {
     );
   }
 
-  findOne(id: string): Observable<Instructor> {
-    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
-
-    return this.usersClient
-      .send<Instructor, number>({ cmd: 'find_one_instructor' }, Number(id))
-      .pipe(catchRpcException<Instructor>());
-  }
-
-  update(id: string, updateData: UpdateInstructorDto): Observable<Instructor> {
+  findOne(id: string): Observable<InstructorResponseDto> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
     return this.usersClient
       .send<
-        Instructor,
+        InstructorResponseDto,
+        number
+      >({ cmd: 'find_one_instructor' }, Number(id))
+      .pipe(catchRpcException<InstructorResponseDto>());
+  }
+
+  update(
+    id: string,
+    updateData: UpdateInstructorDto,
+  ): Observable<InstructorResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+
+    return this.usersClient
+      .send<
+        InstructorResponseDto,
         UpdateCommand<UpdateInstructorDto>
       >({ cmd: 'update_instructor' }, { id: Number(id), updateData: updateData })
-      .pipe(catchRpcException<Instructor>());
+      .pipe(catchRpcException<InstructorResponseDto>());
   }
 
   remove(id: number): Observable<void> {

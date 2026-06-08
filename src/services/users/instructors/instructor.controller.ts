@@ -3,8 +3,8 @@ import { InstructorService } from './instructor.service';
 import { Observable } from 'rxjs';
 import {
   CreateInstructorDto,
+  CreateInstructorRequestDto,
   CreateInstructorResponseDto,
-  Instructor,
   InstructorListResponseDto,
   InstructorResponseDto,
   PaginationQueryDto,
@@ -33,7 +33,7 @@ export class InstructorController {
       'Add a new instructor to the system with the provided details.',
   })
   create(
-    @Body() body: CreateInstructorDto,
+    @Body() body: CreateInstructorRequestDto,
   ): Observable<CreateInstructorResponseDto> {
     return this.instructorService.create(body);
   }
@@ -59,7 +59,7 @@ export class InstructorController {
   @Roles(UserRole.Instructor, UserRole.Admin)
   @Get(':id')
   @ApiGlobalResponse(InstructorResponseDto)
-  findOne(@Param('id') id: string): Observable<Instructor> {
+  findOne(@Param('id') id: string): Observable<InstructorResponseDto> {
     return this.instructorService.findOne(id);
   }
 
@@ -75,7 +75,7 @@ export class InstructorController {
   update(
     @Param('id') id: string,
     @Body() updateInstructorDto: UpdateInstructorDto,
-  ): Observable<Instructor> {
+  ): Observable<InstructorResponseDto> {
     return this.instructorService.update(id, updateInstructorDto);
   }
 
