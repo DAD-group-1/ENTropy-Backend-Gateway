@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles.decorator';
+import { ROLES_KEY, UserRole } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -27,13 +27,11 @@ export class RolesGuard implements CanActivate {
     }>();
     const user = request.user;
 
-    console.log(user);
-
     if (!user?.role) {
       throw new ForbiddenException('Access denied: no roles assigned');
     }
 
-    if (user.role.toLowerCase() === 'admin') return true;
+    if (user.role.toLowerCase() === UserRole.Admin.toLowerCase()) return true;
 
     const hasRole = requiredRoles.some(
       (role) => user.role.toLowerCase() === role.toLowerCase(),
