@@ -6,14 +6,12 @@ import {
   Payment,
   PaymentListResponseDto,
   PaymentResponseDto,
+  SearchPaginationQueryDto,
   UpdatePaymentDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
 import { billingServiceClientModuleName } from '../../../helpers/client-modules';
-import {
-  assertObjectIsNumber,
-  catchRpcException,
-} from '../../../helpers/check-utils';
+import { assertObjectIsNumber, catchRpcException, } from '../../../helpers/check-utils';
 import { UpdateCommand } from '../../../helpers/commands';
 
 @Injectable()
@@ -47,6 +45,20 @@ export class PaymentService {
     return this.billingClient
       .send<PaymentResponseDto, number>({ cmd: 'find_one_payment' }, Number(id))
       .pipe(catchRpcException<Payment>());
+  }
+
+  findByStudentId(studentId: string, query: PaginationQueryDto) {
+    assertObjectIsNumber(
+      studentId,
+      `Invalid student ID: '${studentId}' is not a number`,
+    );
+
+    return this.billingClient
+      .send<
+        PaymentListResponseDto,
+        SearchPaginationQueryDto
+      >({ cmd: 'find_payments_by_student_id' }, { id: Number(studentId), query: query })
+      .pipe(catchRpcException<PaymentListResponseDto>());
   }
 
   update(id: string, updateData: UpdatePaymentDto): Observable<Payment> {

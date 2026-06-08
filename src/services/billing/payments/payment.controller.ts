@@ -64,6 +64,20 @@ export class PaymentController {
   }
 
   @ApiOperation({
+    summary: 'Get all payments for a student',
+    description:
+      'Retrieve a list of all payment records associated with a specific student ID.',
+  })
+  @Get('student/:studentId')
+  @ApiGlobalResponse(PaymentListResponseDto)
+  findByStudentId(
+    @Param('studentId') studentId: string,
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<PaymentListResponseDto> {
+    return this.paymentService.findByStudentId(studentId, query);
+  }
+
+  @ApiOperation({
     summary: 'Update a payment record',
     description: 'Update the details of an existing payment record by its ID.',
   })
