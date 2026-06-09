@@ -1,18 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import {Inject, Injectable} from '@nestjs/common';
+import {Observable} from 'rxjs';
 import {
   CreatePaymentRequestDto,
   PaginationQueryDto,
-  Payment,
   PaymentListResponseDto,
   PaymentResponseDto,
   SearchPaginationQueryDto,
   UpdatePaymentDto,
 } from '@dad-group-1/backend-common';
-import { ClientProxy } from '@nestjs/microservices';
-import { billingServiceClientModuleName } from '../../../helpers/client-modules';
-import { assertObjectIsNumber, catchRpcException, } from '../../../helpers/check-utils';
-import { UpdateCommand } from '../../../helpers/commands';
+import {ClientProxy} from '@nestjs/microservices';
+import {billingServiceClientModuleName} from '../../../helpers/client-modules';
+import {assertObjectIsNumber, catchRpcException,} from '../../../helpers/check-utils';
+import {UpdateCommand} from '../../../helpers/commands';
 
 @Injectable()
 export class PaymentService {
@@ -39,12 +38,12 @@ export class PaymentService {
     );
   }
 
-  findOne(id: string): Observable<Payment> {
+  findOne(id: string) {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
     return this.billingClient
       .send<PaymentResponseDto, number>({ cmd: 'find_one_payment' }, Number(id))
-      .pipe(catchRpcException<Payment>());
+      .pipe(catchRpcException());
   }
 
   findByStudentId(studentId: string, query: PaginationQueryDto) {
@@ -61,7 +60,7 @@ export class PaymentService {
       .pipe(catchRpcException<PaymentListResponseDto>());
   }
 
-  update(id: string, updateData: UpdatePaymentDto): Observable<Payment> {
+  update(id: string, updateData: UpdatePaymentDto) {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
     return this.billingClient
@@ -69,7 +68,7 @@ export class PaymentService {
         PaymentResponseDto,
         UpdateCommand<UpdatePaymentDto>
       >({ cmd: 'update_payment' }, { id: Number(id), updateData: updateData })
-      .pipe(catchRpcException<Payment>());
+      .pipe(catchRpcException());
   }
 
   remove(id: string): Observable<void> {
