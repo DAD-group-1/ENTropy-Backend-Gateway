@@ -66,6 +66,20 @@ export class AttendanceController {
   }
 
   @ApiOperation({
+    summary: 'Get attendance records for a specific student',
+    description:
+      'Retrieve a paginated list of attendance records for a given student ID.',
+  })
+  @Get('student/:studentId')
+  @ApiGlobalResponse(AttendanceListResponseDto)
+  findByStudentId(
+    @Param('studentId') studentId: string,
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<AttendanceListResponseDto> {
+    return this.attendanceService.findByStudentId(studentId, query);
+  }
+
+  @ApiOperation({
     summary: 'Update an attendance record',
     description:
       'Update the details of an existing attendance record by its ID.',

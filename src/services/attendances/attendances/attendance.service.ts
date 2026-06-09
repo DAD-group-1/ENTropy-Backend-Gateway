@@ -1,19 +1,16 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
-  Attendance,
   AttendanceListResponseDto,
   AttendanceResponseDto,
   CreateAttendanceRequestDto,
   PaginationQueryDto,
+  SearchPaginationQueryDto,
   UpdateAttendanceDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
 import { attendancesServiceClientModuleName } from '../../../helpers/client-modules';
-import {
-  assertObjectIsNumber,
-  catchRpcException,
-} from '../../../helpers/check-utils';
+import { assertObjectIsNumber, catchRpcException, } from '../../../helpers/check-utils';
 import { UpdateCommand } from '../../../helpers/commands';
 
 @Injectable()
@@ -50,7 +47,21 @@ export class AttendanceService {
         AttendanceResponseDto,
         number
       >({ cmd: 'find_one_attendance' }, Number(id))
-      .pipe(catchRpcException<Attendance>());
+      .pipe(catchRpcException<AttendanceResponseDto>());
+  }
+
+  findByStudentId(studentId: string, query: PaginationQueryDto) {
+    assertObjectIsNumber(
+      studentId,
+      `Invalid student ID: '${studentId}' is not a number`,
+    );
+
+    return this.attendancesClient
+      .send<
+        AttendanceListResponseDto,
+        SearchPaginationQueryDto
+      >({ cmd: 'find_attendances_by_student' }, { id: Number(studentId), query: query })
+      .pipe(catchRpcException<AttendanceListResponseDto>());
   }
 
   update(
