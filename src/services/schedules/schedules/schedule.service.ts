@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import {
   CreateScheduleRequestDto,
   PaginationQueryDto,
-  Schedule,
   ScheduleListResponseDto,
   ScheduleResponseDto,
   SearchPaginationQueryDto,
@@ -53,7 +52,7 @@ export class ScheduleService {
         ScheduleResponseDto,
         number
       >({ cmd: 'find_one_schedule' }, Number(id))
-      .pipe(catchRpcException<Schedule>());
+      .pipe(catchRpcException<ScheduleResponseDto>());
   }
 
   findByProgramId(programId: string, query: PaginationQueryDto) {
@@ -84,6 +83,25 @@ export class ScheduleService {
       { cmd: 'find_schedules_by_program_between_dates' },
       {
         id: Number(programId),
+        startDate: query.startDate,
+        endDate: query.endDate,
+      },
+    );
+  }
+
+  findByInstructorId(instructorId: string, query: TemporalQueryDto) {
+    assertObjectIsNumber(
+      instructorId,
+      `Invalid Instructor ID: '${instructorId}' is not a number`,
+    );
+
+    return this.schedulesClient.send<
+      ScheduleResponseDto[],
+      TemporalSearchQueryDto
+    >(
+      { cmd: 'find_schedules_by_instructor_between_dates' },
+      {
+        id: Number(instructorId),
         startDate: query.startDate,
         endDate: query.endDate,
       },

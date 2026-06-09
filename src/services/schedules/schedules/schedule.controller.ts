@@ -87,9 +87,10 @@ export class ScheduleController {
   }
 
   @ApiOperation({
-    summary: 'Get all the schedule records between a specific date range',
+    summary:
+      'Get all the schedule records for a specific program within a date range',
     description:
-      'Retrieve a list of schedule records that fall within a specified date range.',
+      'Retrieve a list of schedule records that fall within a specified date range for a given program ID.',
   })
   @Get('program/:programId/date-range')
   @ApiGlobalResponse(ScheduleResponseDto, true)
@@ -98,6 +99,21 @@ export class ScheduleController {
     @TemporalQuery() query: TemporalQueryDto,
   ): Observable<ScheduleResponseDto[]> {
     return this.scheduleService.findByProgramInDateRange(programId, query);
+  }
+
+  @ApiOperation({
+    summary:
+      'Get all the schedule records for a specific instructor within a date range',
+    description:
+      'Retrieve a list of schedule records that fall within a specified date range for a given instructor ID.',
+  })
+  @Get('instructor/:instructorId')
+  @ApiGlobalResponse(ScheduleResponseDto, true)
+  findByInstructorId(
+    @Param('instructorId') instructorId: string,
+    @TemporalQuery() query: TemporalQueryDto,
+  ): Observable<ScheduleResponseDto[]> {
+    return this.scheduleService.findByInstructorId(instructorId, query);
   }
 
   @ApiOperation({
