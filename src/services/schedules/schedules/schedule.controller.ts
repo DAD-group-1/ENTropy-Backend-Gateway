@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -14,6 +15,7 @@ import {
   PaginationQueryDto,
   ScheduleListResponseDto,
   ScheduleResponseDto,
+  TemporalQueryDto,
   UpdateScheduleDto,
 } from '@dad-group-1/backend-common';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
@@ -22,12 +24,16 @@ import { ScheduleService } from './schedule.service';
 import { RolesGuard } from '../../../guards/roles.guard';
 import { Roles, UserRole } from '../../../decorators/roles.decorator';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
-import { PaginationQuery } from '../../../decorators/pagination.decorators';
+import {
+  PaginationQuery,
+  TemporalQuery,
+} from '../../../decorators/pagination.decorators';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('schedules')
 export class ScheduleController {
+  private readonly logger = new Logger(ScheduleController.name);
   constructor(private readonly scheduleService: ScheduleService) {}
 
   @Post()
@@ -64,6 +70,34 @@ export class ScheduleController {
   @ApiGlobalResponse(ScheduleResponseDto)
   findOne(@Param('id') id: string): Observable<ScheduleResponseDto> {
     return this.scheduleService.findOne(id);
+  }
+
+  @ApiOperation({
+    summary: 'Get all the schedule records for a specific program',
+    description:
+      'Retrieve a list of schedule records associated with a specific program ID.',
+  })
+  @Get('program/:programId')
+  @ApiGlobalResponse(ScheduleListResponseDto, true)
+  findByProgramId(
+    @Param('programId') programId: string,
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<ScheduleListResponseDto> {
+    return this.scheduleService.findByProgramId(programId, query);
+  }
+
+  @ApiOperation({
+    summary: 'Get all the schedule records between a specific date range',
+    description:
+      'Retrieve a list of schedule records that fall within a specified date range.',
+  })
+  @Get('program/:programId/date-range')
+  @ApiGlobalResponse(ScheduleResponseDto, true)
+  findByDateRange(
+    @Param('programId') programId: string,
+    @TemporalQuery() query: TemporalQueryDto,
+  ): Observable<ScheduleResponseDto[]> {
+    return this.scheduleService.findByProgramInDateRange(programId, query);
   }
 
   @ApiOperation({

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   CreateScheduleRequestDto,
@@ -6,6 +6,9 @@ import {
   Schedule,
   ScheduleListResponseDto,
   ScheduleResponseDto,
+  SearchPaginationQueryDto,
+  TemporalQueryDto,
+  TemporalSearchQueryDto,
   UpdateScheduleDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -18,6 +21,7 @@ import { UpdateCommand } from '../../../helpers/commands';
 
 @Injectable()
 export class ScheduleService {
+  private readonly logger = new Logger(ScheduleService.name);
   constructor(
     @Inject(schedulesServiceClientModuleName)
     private readonly schedulesClient: ClientProxy,
@@ -50,6 +54,40 @@ export class ScheduleService {
         number
       >({ cmd: 'find_one_schedule' }, Number(id))
       .pipe(catchRpcException<Schedule>());
+  }
+
+  findByProgramId(programId: string, query: PaginationQueryDto) {
+    assertObjectIsNumber(
+      programId,
+      `Invalid Program ID: '${programId}' is not a number`,
+    );
+
+    return this.schedulesClient.send<
+      ScheduleListResponseDto,
+      SearchPaginationQueryDto
+    >(
+      { cmd: 'find_schedules_by_program' },
+      { id: Number(programId), query: query },
+    );
+  }
+
+  findByProgramInDateRange(programId: string, query: TemporalQueryDto) {
+    assertObjectIsNumber(
+      programId,
+      `Invalid Program ID: '${programId}' is not a number`,
+    );
+
+    return this.schedulesClient.send<
+      ScheduleResponseDto[],
+      TemporalSearchQueryDto
+    >(
+      { cmd: 'find_schedules_by_program_between_dates' },
+      {
+        id: Number(programId),
+        startDate: query.startDate,
+        endDate: query.endDate,
+      },
+    );
   }
 
   update(
