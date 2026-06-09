@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   CreateGradeRequestDto,
-  Grade,
   GradeListResponseDto,
   GradeResponseDto,
   PaginationQueryDto,
+  SearchPaginationQueryDto,
   UpdateGradeDto,
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -44,7 +44,24 @@ export class GradeService {
 
     return this.gradesClient
       .send<GradeResponseDto, number>({ cmd: 'find_one_grade' }, Number(id))
-      .pipe(catchRpcException<Grade>());
+      .pipe(catchRpcException<GradeResponseDto>());
+  }
+
+  findByStudentId(
+    studentId: string,
+    query: PaginationQueryDto,
+  ): Observable<GradeListResponseDto> {
+    assertObjectIsNumber(
+      studentId,
+      `Invalid Student ID: '${studentId}' is not a number`,
+    );
+
+    return this.gradesClient
+      .send<
+        GradeListResponseDto,
+        SearchPaginationQueryDto
+      >({ cmd: 'find_grades_by_student' }, { id: Number(studentId), query: query })
+      .pipe(catchRpcException<GradeListResponseDto>());
   }
 
   update(id: string, updateData: UpdateGradeDto): Observable<GradeResponseDto> {

@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   CreateEnrollmentRequestDto,
-  Enrollment,
   EnrollmentListResponseDto,
   EnrollmentResponseDto,
   PaginationQueryDto,
@@ -52,7 +51,10 @@ export class EnrollmentService {
       .pipe(catchRpcException<EnrollmentResponseDto>());
   }
 
-  update(id: string, updateData: UpdateEnrollmentDto): Observable<Enrollment> {
+  update(
+    id: string,
+    updateData: UpdateEnrollmentDto,
+  ): Observable<EnrollmentResponseDto> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
     return this.enrollmentsClient

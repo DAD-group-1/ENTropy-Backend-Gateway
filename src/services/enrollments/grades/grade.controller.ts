@@ -64,6 +64,20 @@ export class GradeController {
   }
 
   @ApiOperation({
+    summary: 'Get grade records by student ID',
+    description:
+      'Retrieve all grade records associated with a specific student ID.',
+  })
+  @Get('student/:studentId')
+  @ApiGlobalResponse(GradeListResponseDto)
+  findByStudentId(
+    @Param('studentId') studentId: string,
+    @PaginationQuery() query: PaginationQueryDto,
+  ): Observable<GradeListResponseDto> {
+    return this.gradeService.findByStudentId(studentId, query);
+  }
+
+  @ApiOperation({
     summary: 'Update a grade record',
     description: 'Modify an existing grade record using its unique ID.',
   })
