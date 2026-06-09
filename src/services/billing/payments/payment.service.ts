@@ -10,7 +10,10 @@ import {
 } from '@dad-group-1/backend-common';
 import { ClientProxy } from '@nestjs/microservices';
 import { billingServiceClientModuleName } from '../../../helpers/client-modules';
-import { assertObjectIsNumber, catchRpcException, } from '../../../helpers/check-utils';
+import {
+  assertObjectIsNumber,
+  catchRpcException,
+} from '../../../helpers/check-utils';
 import { UpdateCommand } from '../../../helpers/commands';
 
 @Injectable()
