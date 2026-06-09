@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { usersServiceClientModuleName } from '../../../helpers/client-modules';
 import { ClientProxy } from '@nestjs/microservices';
@@ -12,6 +12,7 @@ import { catchRpcException } from '../../../helpers/check-utils';
 
 @Injectable()
 export class AuthenticationService {
+  private readonly logger = new Logger(AuthenticationService.name);
   constructor(
     @Inject(usersServiceClientModuleName)
     private readonly usersClient: ClientProxy,

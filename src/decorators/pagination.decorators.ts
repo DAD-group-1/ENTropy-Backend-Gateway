@@ -12,6 +12,13 @@ interface PaginationQueryOptions {
   defaultLimit?: number;
 }
 
+interface TemporalQueryOptions {
+  startDate?: Date;
+  endDate?: Date;
+  defaultStartDate?: Date;
+  defaultEndDate?: Date;
+}
+
 /**
  * Custom parameter decorator to extract pagination query parameters from the request and apply validation and defaults.
  *
@@ -68,7 +75,7 @@ export const PaginationQuery =
       required: false,
       type: Number,
       example: options.defaultPage ?? 1,
-      // @ts-ignore
+      // @ts-expect-error
     })(target, propertyKey as string, descriptor);
 
     ApiQuery({
@@ -76,8 +83,66 @@ export const PaginationQuery =
       required: false,
       type: Number,
       example: options.defaultLimit ?? 10,
-      // @ts-ignore
+      // @ts-expect-error
     })(target, propertyKey as string, descriptor);
 
     PaginationQueryParam(options)(target, propertyKey, parameterIndex);
+  };
+
+export const TemporalQueryParam = createParamDecorator(
+  (
+    options: TemporalQueryOptions,
+    ctx: ExecutionContext,
+  ): { startDate?: string; endDate?: string } => {
+    const request = ctx.switchToHttp().getRequest<Request>();
+    const { start_date, end_date } = request.query;
+
+    const result: { startDate?: string; endDate?: string } = {};
+
+    if (start_date) {
+      result.startDate = new Date(start_date as string)
+        .toISOString()
+        .split('T')[0];
+    } else if (options.defaultStartDate) {
+      result.startDate = options.defaultStartDate.toISOString().split('T')[0];
+    }
+
+    if (end_date) {
+      result.endDate = new Date(end_date as string).toISOString().split('T')[0];
+    } else if (options.defaultEndDate) {
+      result.endDate = options.defaultEndDate.toISOString().split('T')[0];
+    }
+
+    return result;
+  },
+);
+
+export const TemporalQuery =
+  (options: TemporalQueryOptions = {}): ParameterDecorator =>
+  (target, propertyKey, parameterIndex) => {
+    const descriptor = Object.getOwnPropertyDescriptor(
+      target,
+      propertyKey as string,
+    );
+
+    ApiQuery({
+      name: 'start_date',
+      required: false,
+      type: String,
+      format: 'date',
+      example:
+        options.defaultStartDate ?? new Date().toISOString().split('T')[0],
+      // @ts-expect-error
+    })(target, propertyKey as string, descriptor);
+
+    ApiQuery({
+      name: 'end_date',
+      required: false,
+      type: String,
+      format: 'date',
+      example: options.defaultEndDate ?? new Date().toISOString().split('T')[0],
+      // @ts-expect-error
+    })(target, propertyKey as string, descriptor);
+
+    TemporalQueryParam(options)(target, propertyKey, parameterIndex);
   };

@@ -34,10 +34,12 @@ export class CourseService {
   }
 
   findAll(query: PaginationQueryDto): Observable<CourseListResponseDto> {
-    return this.billingClient.send<CourseListResponseDto, PaginationQueryDto>(
-      { cmd: 'find_all_courses' },
-      query,
-    );
+    return this.billingClient
+      .send<
+        CourseListResponseDto,
+        PaginationQueryDto
+      >({ cmd: 'find_all_courses' }, query)
+      .pipe(catchRpcException<CourseListResponseDto>());
   }
 
   findOne(id: string): Observable<CourseResponseDto> {

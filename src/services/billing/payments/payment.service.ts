@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import {
   CreatePaymentRequestDto,
   PaginationQueryDto,
-  Payment,
   PaymentListResponseDto,
   PaymentResponseDto,
   SearchPaginationQueryDto,
@@ -39,12 +38,12 @@ export class PaymentService {
     );
   }
 
-  findOne(id: string): Observable<Payment> {
+  findOne(id: string): Observable<PaymentResponseDto> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
     return this.billingClient
       .send<PaymentResponseDto, number>({ cmd: 'find_one_payment' }, Number(id))
-      .pipe(catchRpcException<Payment>());
+      .pipe(catchRpcException<PaymentResponseDto>());
   }
 
   findByStudentId(studentId: string, query: PaginationQueryDto) {
@@ -61,7 +60,10 @@ export class PaymentService {
       .pipe(catchRpcException<PaymentListResponseDto>());
   }
 
-  update(id: string, updateData: UpdatePaymentDto): Observable<Payment> {
+  update(
+    id: string,
+    updateData: UpdatePaymentDto,
+  ): Observable<PaymentResponseDto> {
     assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
 
     return this.billingClient
@@ -69,7 +71,7 @@ export class PaymentService {
         PaymentResponseDto,
         UpdateCommand<UpdatePaymentDto>
       >({ cmd: 'update_payment' }, { id: Number(id), updateData: updateData })
-      .pipe(catchRpcException<Payment>());
+      .pipe(catchRpcException<PaymentResponseDto>());
   }
 
   remove(id: string): Observable<void> {
