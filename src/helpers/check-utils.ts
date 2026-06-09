@@ -1,6 +1,7 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { catchError, EMPTY, OperatorFunction } from 'rxjs';
+import { HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { catchError, EMPTY, firstValueFrom, OperatorFunction } from 'rxjs';
 import { MicroserviceRpcException } from './interfaces/error.interface';
+import { ClientProxy } from '@nestjs/microservices';
 
 /**
  * Checks if the given value can be converted to a number. If not, throws an HttpException with the provided error message.
@@ -25,6 +26,18 @@ export function assertObjectIsNumber(value: any, error: string): void {
 export function assertObjectIsNotEmpty(value: any, error: string): void {
   if (value === null || value === undefined) {
     throwHttpError(error, HttpStatus.NOT_FOUND);
+  }
+}
+
+/**
+ * Checks if the given Date object represents a valid date. If it does not, throws an HttpException with the provided error message.
+ * @param value The value to check for validity as a date
+ * @param error The error message to include in the exception if the value cannot be converted to a valid date
+ * @throws HttpException with the provided error message if the value cannot be converted to a valid date
+ */
+export function assertDateIsValid(value: Date, error: string): void {
+  if (isNaN(value.getTime())) {
+    throwHttpError(error);
   }
 }
 
@@ -56,4 +69,22 @@ export function catchRpcException<T>(): OperatorFunction<T, T> {
     throwHttpError(error.message, error.code);
     return EMPTY;
   });
+}
+
+export async function checkMicroserviceAvailability(
+  clientProxy: ClientProxy,
+  logger: Logger,
+  serviceName: string,
+): Promise<boolean> {
+  try {
+    await firstValueFrom(clientProxy.send({ cmd: 'check' }, {}));
+    return true;
+  } catch (error) {
+    logger.error(`${serviceName} is not available: ${error.message || error}`);
+    throwHttpError(
+      `${serviceName} is currently unavailable. Please try again later.`,
+      HttpStatus.SERVICE_UNAVAILABLE,
+    );
+    return false;
+  }
 }
