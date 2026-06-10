@@ -25,7 +25,7 @@ export class InstructorController {
 
   @ApiGlobalResponse(CreateInstructorResponseDto)
   @ApiBody({ type: CreateInstructorDto })
-  @Roles(UserRole.Admin)
+  @Roles(UserRole.Management, UserRole.Admin)
   @Post()
   @ApiOperation({
     summary: 'Create a new instructor',
@@ -42,7 +42,7 @@ export class InstructorController {
     summary: 'Get a list of all instructors',
     description: 'Retrieve a paginated list of all instructors in the system.',
   })
-  @Roles(UserRole.Instructor, UserRole.Admin)
+  @Roles(UserRole.Instructor, UserRole.Management, UserRole.Admin)
   @Get()
   @ApiGlobalResponse(InstructorListResponseDto)
   findAll(
@@ -56,7 +56,7 @@ export class InstructorController {
     description:
       'Retrieve detailed information about a specific instructor using their unique ID.',
   })
-  @Roles(UserRole.Instructor, UserRole.Admin)
+  @Roles(UserRole.Instructor, UserRole.Management, UserRole.Admin)
   @Get(':id')
   @ApiGlobalResponse(InstructorResponseDto)
   findOne(@Param('id') id: string): Observable<InstructorResponseDto> {
@@ -68,7 +68,7 @@ export class InstructorController {
     description:
       'Modify the details of an existing instructor using their unique ID.',
   })
-  @Roles(UserRole.Admin)
+  @Roles(UserRole.Management, UserRole.Admin)
   @Patch(':id')
   @ApiBody({ type: UpdateInstructorDto })
   @ApiGlobalResponse(CreateInstructorResponseDto)
@@ -83,7 +83,7 @@ export class InstructorController {
     summary: 'Delete an instructor',
     description: 'Remove an instructor from the system using their unique ID.',
   })
-  @Roles(UserRole.Admin)
+  @Roles(UserRole.Management, UserRole.Admin)
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {
     return this.instructorService.remove(id);
