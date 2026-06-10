@@ -58,7 +58,7 @@ async function bootstrap() {
 
   CLIENT_MODULES_CONFIG.forEach((rec) => {
     microserviceLogger.log(
-      `+ Configured client for ${rec.name}: ${rec.config.defaultHost}:${rec.config.defaultPort} (env: ${rec.config.hostEnvVarName}, ${rec.config.portEnvVarName})`,
+      `+ Configured client for ${rec.name}: ${configService.get<string>(rec.config.hostEnvVarName, rec.config.defaultHost)}:${configService.get<number>(rec.config.portEnvVarName, rec.config.defaultPort)}`,
     );
   });
 }
