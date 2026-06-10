@@ -1,6 +1,6 @@
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DynamicModule } from '@nestjs/common';
+import { DynamicModule, Logger } from '@nestjs/common';
 
 export class MicroserviceNetworkConfig {
   hostEnvVarName: string;
@@ -8,6 +8,8 @@ export class MicroserviceNetworkConfig {
   defaultHost: string;
   defaultPort: number;
 }
+
+const logger = new Logger('ClientModuleFactory');
 
 /**
  * Creates a dynamic client module for a microservice in NestJS using TCP transport.
@@ -23,14 +25,19 @@ export class MicroserviceNetworkConfig {
  */
 const createClientModule = (
   name: string,
-  microserviceNetworkConfig: Partial<MicroserviceNetworkConfig> = {
+  microserviceNetworkConfig: Partial<MicroserviceNetworkConfig> = {},
+): DynamicModule => {
+  const config = {
     hostEnvVarName: `${name}_HOST`,
     portEnvVarName: `${name}_PORT`,
     defaultHost: `localhost`,
     defaultPort: 3001,
-  },
-): DynamicModule =>
-  ClientsModule.registerAsync([
+    ...microserviceNetworkConfig, // overrides only what's passed
+  };
+  logger.log(
+    `Creating client module for ${name} with host env var: ${config.hostEnvVarName}, port env var: ${config.portEnvVarName}, default host: ${config.defaultHost}, default port: ${config.defaultPort}`,
+  );
+  return ClientsModule.registerAsync([
     {
       name: name,
       imports: [ConfigModule],
@@ -38,18 +45,19 @@ const createClientModule = (
         transport: Transport.TCP,
         options: {
           host: configService.get<string>(
-            microserviceNetworkConfig.hostEnvVarName!,
-            microserviceNetworkConfig.defaultHost!,
+            config.hostEnvVarName,
+            config.defaultHost,
           ),
           port: configService.get<number>(
-            microserviceNetworkConfig.portEnvVarName!,
-            microserviceNetworkConfig.defaultPort!,
+            config.portEnvVarName,
+            config.defaultPort,
           ),
         },
       }),
       inject: [ConfigService],
     },
   ]);
+};
 
 export const usersServiceClientModuleName = 'USERS_SERVICE';
 export const usersServiceClientModule: DynamicModule = createClientModule(
