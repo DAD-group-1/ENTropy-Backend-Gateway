@@ -11,6 +11,7 @@ import { HttpExceptionFilter } from './helpers/http-exception-filter';
 import { createWinstonLogger } from '@dad-group-1/backend-common';
 import { Logger } from '@nestjs/common';
 import { MessageTransformerInterceptor } from './helpers/message-interceptor';
+import { CLIENT_MODULES_CONFIG } from './helpers/client-modules';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, {
@@ -50,6 +51,14 @@ async function bootstrap() {
   new Logger('Bootstrap').log(
     `Gateway is running on: http://localhost:${port}`,
   );
+
+  const microserviceLogger = new Logger('Microservices');
+
+  CLIENT_MODULES_CONFIG.forEach((rec) => {
+    microserviceLogger.log(
+      `Configured client for ${rec.name}: ${rec.config.defaultHost}:${rec.config.defaultPort} (env: ${rec.config.hostEnvVarName}, ${rec.config.portEnvVarName})`,
+    );
+  });
 }
 
 bootstrap();

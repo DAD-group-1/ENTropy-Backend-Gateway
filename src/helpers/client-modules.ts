@@ -1,6 +1,6 @@
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DynamicModule, Logger } from '@nestjs/common';
+import { DynamicModule } from '@nestjs/common';
 
 export class MicroserviceNetworkConfig {
   hostEnvVarName: string;
@@ -9,7 +9,10 @@ export class MicroserviceNetworkConfig {
   defaultPort: number;
 }
 
-const logger = new Logger('ClientModuleFactory');
+export const CLIENT_MODULES_CONFIG: {
+  name: string;
+  config: MicroserviceNetworkConfig;
+}[] = [];
 
 /**
  * Creates a dynamic client module for a microservice in NestJS using TCP transport.
@@ -34,9 +37,7 @@ const createClientModule = (
     defaultPort: 3001,
     ...microserviceNetworkConfig, // overrides only what's passed
   };
-  logger.log(
-    `Creating client module for ${name} with host env var: ${config.hostEnvVarName}, port env var: ${config.portEnvVarName}, default host: ${config.defaultHost}, default port: ${config.defaultPort}`,
-  );
+  CLIENT_MODULES_CONFIG.push({ name, config });
   return ClientsModule.registerAsync([
     {
       name: name,
