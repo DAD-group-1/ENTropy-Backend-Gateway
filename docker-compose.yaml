@@ -6,3 +6,19 @@ services:
     container_name: entropy_backend_gateway
     ports:
       - '3000:3000'
+
+  rabbitmq:
+    profiles: ["rabbitmq"]
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # AMQP protocol port
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: changeme
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+volumes:
+  rabbitmq_data:
