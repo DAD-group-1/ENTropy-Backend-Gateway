@@ -107,3 +107,10 @@ export const schedulesServiceClientModule: DynamicModule = createClientModule(
   schedulesServiceClientModuleName,
   { defaultPort: 3007 },
 );
+
+export const agentServiceClientModuleName = 'AGENT_SERVICE';
+
+export const agentServiceClientModule: DynamicModule = createClientModule(
+  agentServiceClientModuleName,
+  { defaultPort: 3008 },
+);

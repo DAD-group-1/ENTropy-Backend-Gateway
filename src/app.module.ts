@@ -20,6 +20,7 @@ import { ScheduleModule } from './services/schedules/schedules/schedule.module';
 import { NotificationsModule } from './services/notifications/notifications.module';
 import { UserModule } from './services/users/users/user.module';
 import { WebsocketModule } from './websocket/websocket.module';
+import { AgentModule } from './services/agent/agent.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { WebsocketModule } from './websocket/websocket.module';
     AttendanceModule,
     NotificationsModule,
     WebsocketModule,
+    AgentModule,
   ],
   providers: [JwtStrategy],
 })
