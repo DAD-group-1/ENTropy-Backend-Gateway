@@ -16,7 +16,10 @@ import {
   UserRoleResponseDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
-import { catchRpcException } from '../../../helpers/check-utils';
+import {
+  assertObjectIsNumber,
+  catchRpcException,
+} from '../../../helpers/check-utils';
 import { UpdateCommand } from '../../../helpers/commands';
 
 @Injectable()
@@ -41,13 +44,16 @@ export class AuthorizationService {
       .pipe(catchRpcException<RoleResponseDto[]>());
   }
 
-  findOne(id: number): Observable<RoleResponseDto> {
+  findOne(id: string): Observable<RoleResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+
     return this.usersClient
-      .send<RoleResponseDto, number>({ cmd: 'get_role' }, id)
+      .send<RoleResponseDto, number>({ cmd: 'get_role' }, Number(id))
       .pipe(catchRpcException<RoleResponseDto>());
   }
 
-  update(id: number, updateData: UpdateRoleDto): Observable<RoleResponseDto> {
+  update(id: string, updateData: UpdateRoleDto): Observable<RoleResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     return this.usersClient
       .send<
         RoleResponseDto,
@@ -56,7 +62,9 @@ export class AuthorizationService {
       .pipe(catchRpcException<RoleResponseDto>());
   }
 
-  remove(body: DeleteRoleDto): Observable<unknown> {
+  remove(id: string): Observable<unknown> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    const body: DeleteRoleDto = { role_id: Number(id) };
     return this.usersClient
       .send({ cmd: 'delete_role' }, body)
       .pipe(catchRpcException());
@@ -105,11 +113,12 @@ export class AuthorizationService {
   }
 
   assignRole(
-    userId: number,
+    id: string,
     body: AssignRoleRequestDto,
   ): Observable<UserResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
     const payload = {
-      user_id: userId,
+      user_id: Number(id),
       role_id: body.role_id,
     };
     return this.usersClient
@@ -120,8 +129,9 @@ export class AuthorizationService {
       .pipe(catchRpcException<UserResponseDto>());
   }
 
-  getUserRole(userId: number): Observable<RoleResponseDto> {
-    const payload: GetUserRoleDto = { user_id: userId };
+  getUserRole(id: string): Observable<RoleResponseDto> {
+    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
+    const payload: GetUserRoleDto = { user_id: Number(id) };
     return this.usersClient
       .send<RoleResponseDto, GetUserRoleDto>({ cmd: 'get_user_role' }, payload)
       .pipe(catchRpcException<RoleResponseDto>());

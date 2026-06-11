@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../../guards/jwt.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
@@ -18,6 +29,7 @@ import { PaginationQuery } from '../../decorators/pagination.decorators';
 @ApiBearerAuth()
 @Controller('notifications')
 export class NotificationsController {
+  private readonly logger = new Logger(NotificationsController.name);
   constructor(private readonly notificationsService: NotificationsService) {}
 
   @Post()
@@ -28,6 +40,7 @@ export class NotificationsController {
     description: 'Add a new notification record to the system.',
   })
   create(@Body() body: CreateNotificationDto) {
+    this.logger.log('Creating a new notification record');
     return this.notificationsService.create(body);
   }
 
@@ -38,7 +51,7 @@ export class NotificationsController {
   @Get()
   @ApiGlobalResponse(GetNotificationListResponseDto)
   findAll(@PaginationQuery() query: PaginationQueryDto) {
-    console.log(query);
+    this.logger.log('Retrieving a paginated list of notifications');
     return this.notificationsService.findAll(query);
   }
 
@@ -53,6 +66,7 @@ export class NotificationsController {
     @Param('userId', ParseIntPipe) userId: number,
     @PaginationQuery() query: PaginationQueryDto,
   ) {
+    this.logger.log('Retrieving notifications for user with ID: ' + userId);
     return this.notificationsService.findAllForUser(userId, query);
   }
 
@@ -63,6 +77,7 @@ export class NotificationsController {
   @Get(':id')
   @ApiGlobalResponse(GetNotificationResponseDto)
   findOne(@Param('id') id: string) {
+    this.logger.log('Retrieving notification with ID: ' + id);
     return this.notificationsService.findOne(id);
   }
 
@@ -77,6 +92,7 @@ export class NotificationsController {
     @Param('id') id: string,
     @Body() updateNotificationDto: UpdateNotificationDto,
   ) {
+    this.logger.log('Updating notification with ID: ' + id);
     return this.notificationsService.update(id, updateNotificationDto);
   }
 
@@ -87,6 +103,7 @@ export class NotificationsController {
   @Delete(':id')
   @ApiGlobalResponse(DeleteNotificationResponseDto)
   remove(@Param('id') id: string) {
+    this.logger.log('Deleting notification with ID: ' + id);
     return this.notificationsService.remove(id);
   }
 }

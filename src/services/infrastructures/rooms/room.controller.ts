@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('rooms')
 export class RoomController {
+  private readonly logger = new Logger(RoomController.name);
   constructor(private readonly roomService: RoomService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class RoomController {
   create(
     @Body() createRoomDto: CreateRoomRequestDto,
   ): Observable<RoomResponseDto> {
+    this.logger.log('Creating a new room record');
     return this.roomService.create(createRoomDto);
   }
 
@@ -50,6 +53,7 @@ export class RoomController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<RoomListResponseDto> {
+    this.logger.log('Retrieving a list of rooms with pagination');
     return this.roomService.findAll(query);
   }
 
@@ -60,6 +64,7 @@ export class RoomController {
   @Get(':id')
   @ApiGlobalResponse(RoomResponseDto)
   findOne(@Param('id') id: string): Observable<RoomResponseDto> {
+    this.logger.log('Retrieving a room record by ID: ' + id);
     return this.roomService.findOne(id);
   }
 
@@ -74,6 +79,7 @@ export class RoomController {
     @Param('id') id: string,
     @Body() updateRoomDto: UpdateRoomDto,
   ): Observable<RoomResponseDto> {
+    this.logger.log('Updating a room record with ID: ' + id);
     return this.roomService.update(id, updateRoomDto);
   }
 
@@ -83,6 +89,7 @@ export class RoomController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting a room record with ID: ' + id);
     return this.roomService.remove(id);
   }
 }

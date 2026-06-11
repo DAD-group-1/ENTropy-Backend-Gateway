@@ -5,7 +5,15 @@ import {
   RefreshTokenDto,
   TokenResponseDto,
 } from '@dad-group-1/backend-common';
-import { Body, Controller, Get, HttpStatus, Post, UseGuards, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Logger,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { throwHttpError } from '../../../helpers/check-utils';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
@@ -14,6 +22,7 @@ import { ApiGlobalResponse } from '../../../decorators/api.decorators';
 
 @Controller('')
 export class AuthenticationController {
+  private readonly logger = new Logger(AuthenticationController.name);
   constructor(private readonly authenticationService: AuthenticationService) {}
 
   @ApiOperation({
@@ -25,6 +34,7 @@ export class AuthenticationController {
   @ApiBody({ type: LogoutDto })
   @ApiGlobalResponse(LogoutResponseDto)
   async logout(@Body() body: LogoutDto): Promise<LogoutResponseDto> {
+    this.logger.log(`Logging out user`);
     const result = await this.authenticationService.sendLogout(body);
     if (!result)
       throwHttpError('Logout failed', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -40,6 +50,7 @@ export class AuthenticationController {
   @ApiBody({ type: LoginDto })
   @ApiGlobalResponse(TokenResponseDto)
   async login(@Body() body: LoginDto): Promise<TokenResponseDto> {
+    this.logger.log(`Attempting login for user with email ${body.email}`);
     const result = await this.authenticationService.sendLogin(
       body.email,
       body.password,
@@ -57,6 +68,7 @@ export class AuthenticationController {
   @ApiBody({ type: RefreshTokenDto })
   @ApiGlobalResponse(TokenResponseDto)
   async refreshToken(@Body() body: RefreshTokenDto): Promise<TokenResponseDto> {
+    this.logger.log(`Attempting to refresh token for user`);
     const result = await this.authenticationService.sendRefreshToken(body);
     if (!result)
       throwHttpError('Token refresh failed', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -72,6 +84,7 @@ export class AuthenticationController {
   @ApiBearerAuth()
   @Get('verify')
   verifyToken(): object {
+    this.logger.log('Verifying access token');
     return {};
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Param, UseGuards } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import {
   PaginationQueryDto,
@@ -15,6 +15,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
+  private readonly logger = new Logger(UserController.name);
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({
@@ -26,6 +27,7 @@ export class UserController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<UserListResponseDto> {
+    this.logger.log('Received request to get all users with pagination');
     return this.userService.findAll(query);
   }
 
@@ -36,6 +38,7 @@ export class UserController {
   @Get(':id')
   @ApiGlobalResponse(UserResponseDto)
   findOne(@Param('id') id: string): Observable<UserResponseDto> {
+    this.logger.log('Received request to get user with ID: ' + id);
     return this.userService.findOne(id);
   }
 }

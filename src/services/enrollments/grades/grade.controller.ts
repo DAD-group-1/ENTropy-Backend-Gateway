@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('grades')
 export class GradeController {
+  private readonly logger = new Logger(GradeController.name);
   constructor(private readonly gradeService: GradeService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class GradeController {
   create(
     @Body() createGradeDto: CreateGradeRequestDto,
   ): Observable<GradeResponseDto> {
+    this.logger.log('Creating a new grade record');
     return this.gradeService.create(createGradeDto);
   }
 
@@ -50,6 +53,7 @@ export class GradeController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<GradeListResponseDto> {
+    this.logger.log('Retrieving all grade records with pagination');
     return this.gradeService.findAll(query);
   }
 
@@ -60,6 +64,7 @@ export class GradeController {
   @Get(':id')
   @ApiGlobalResponse(GradeResponseDto)
   findOne(@Param('id') id: string): Observable<GradeResponseDto> {
+    this.logger.log('Retrieving grade record with ID: ' + id);
     return this.gradeService.findOne(id);
   }
 
@@ -74,6 +79,7 @@ export class GradeController {
     @Param('studentId') studentId: string,
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<GradeListResponseDto> {
+    this.logger.log('Retrieving grade records for student ID: ' + studentId);
     return this.gradeService.findByStudentId(studentId, query);
   }
 
@@ -88,6 +94,7 @@ export class GradeController {
     @Param('id') id: string,
     @Body() updateGradeDto: UpdateGradeDto,
   ): Observable<GradeResponseDto> {
+    this.logger.log('Updating grade record with ID: ' + id);
     return this.gradeService.update(id, updateGradeDto);
   }
 
@@ -98,6 +105,7 @@ export class GradeController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting grade record with ID: ' + id);
     return this.gradeService.remove(id);
   }
 }

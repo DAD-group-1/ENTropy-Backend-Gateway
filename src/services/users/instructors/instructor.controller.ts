@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { InstructorService } from './instructor.service';
 import { Observable } from 'rxjs';
 import {
@@ -21,6 +31,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('instructors')
 export class InstructorController {
+  private readonly logger = new Logger(InstructorController.name);
   constructor(private readonly instructorService: InstructorService) {}
 
   @ApiGlobalResponse(CreateInstructorResponseDto)
@@ -35,6 +46,7 @@ export class InstructorController {
   create(
     @Body() body: CreateInstructorRequestDto,
   ): Observable<CreateInstructorResponseDto> {
+    this.logger.log('Creating a new instructor record');
     return this.instructorService.create(body);
   }
 
@@ -48,6 +60,9 @@ export class InstructorController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<InstructorListResponseDto> {
+    this.logger.log(
+      'Fetching all instructors with pagination: ' + JSON.stringify(query),
+    );
     return this.instructorService.findAll(query);
   }
 
@@ -60,6 +75,7 @@ export class InstructorController {
   @Get(':id')
   @ApiGlobalResponse(InstructorResponseDto)
   findOne(@Param('id') id: string): Observable<InstructorResponseDto> {
+    this.logger.log('Fetching instructor with ID: ' + id);
     return this.instructorService.findOne(id);
   }
 
@@ -76,6 +92,7 @@ export class InstructorController {
     @Param('id') id: string,
     @Body() updateInstructorDto: UpdateInstructorDto,
   ): Observable<InstructorResponseDto> {
+    this.logger.log('Updating instructor with ID: ' + id);
     return this.instructorService.update(id, updateInstructorDto);
   }
 
@@ -86,6 +103,7 @@ export class InstructorController {
   @Roles(UserRole.Management, UserRole.Admin)
   @Delete(':id')
   remove(@Param('id') id: number): Observable<void> {
+    this.logger.log('Deleting instructor with ID: ' + id);
     return this.instructorService.remove(id);
   }
 }

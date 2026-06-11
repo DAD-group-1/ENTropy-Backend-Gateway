@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('campuses')
 export class CampusController {
+  private readonly logger = new Logger(CampusController.name);
   constructor(private readonly campusService: CampusService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class CampusController {
   create(
     @Body() createCampusDto: CreateCampusRequestDto,
   ): Observable<CampusResponseDto> {
+    this.logger.log('Creating a new campus record');
     return this.campusService.create(createCampusDto);
   }
 
@@ -50,6 +53,7 @@ export class CampusController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<CampusListResponseDto> {
+    this.logger.log('Retrieving all campus records with pagination');
     return this.campusService.findAll(query);
   }
 
@@ -60,6 +64,7 @@ export class CampusController {
   @Get(':id')
   @ApiGlobalResponse(CampusResponseDto)
   findOne(@Param('id') id: string): Observable<CampusResponseDto> {
+    this.logger.log('Retrieving campus record with ID: ' + id);
     return this.campusService.findOne(id);
   }
 
@@ -74,6 +79,7 @@ export class CampusController {
     @Param('id') id: string,
     @Body() updateCampusDto: UpdateCampusDto,
   ): Observable<CampusResponseDto> {
+    this.logger.log('Updating campus record with ID: ' + id);
     return this.campusService.update(id, updateCampusDto);
   }
 
@@ -83,6 +89,7 @@ export class CampusController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting campus record with ID: ' + id);
     return this.campusService.remove(id);
   }
 }

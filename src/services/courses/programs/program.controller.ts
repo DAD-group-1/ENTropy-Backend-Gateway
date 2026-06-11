@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('programs')
 export class ProgramController {
+  private readonly logger = new Logger(ProgramController.name);
   constructor(private readonly courseService: ProgramService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class ProgramController {
   create(
     @Body() createProgramDto: CreateProgramDto,
   ): Observable<ProgramResponseDto> {
+    this.logger.log('Creating a new program record');
     return this.courseService.create(createProgramDto);
   }
 
@@ -50,6 +53,7 @@ export class ProgramController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<ProgramListResponseDto> {
+    this.logger.log('Retrieving all program records with pagination');
     return this.courseService.findAll(query);
   }
 
@@ -61,6 +65,7 @@ export class ProgramController {
   @ApiBody({ type: ProgramResponseDto })
   @ApiGlobalResponse(ProgramResponseDto)
   findOne(@Param('id') id: string): Observable<ProgramResponseDto> {
+    this.logger.log('Retrieving program record with ID: ' + id);
     return this.courseService.findOne(id);
   }
 
@@ -75,6 +80,7 @@ export class ProgramController {
     @Param('id') id: string,
     @Body() updateProgramDto: UpdateProgramDto,
   ): Observable<ProgramResponseDto> {
+    this.logger.log('Updating program record with ID: ' + id);
     return this.courseService.update(id, updateProgramDto);
   }
 
@@ -84,6 +90,7 @@ export class ProgramController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting program record with ID: ' + id);
     return this.courseService.remove(id);
   }
 }

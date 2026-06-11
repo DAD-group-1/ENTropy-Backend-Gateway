@@ -47,6 +47,7 @@ export class ScheduleController {
   create(
     @Body() createScheduleDto: CreateScheduleRequestDto,
   ): Observable<ScheduleResponseDto> {
+    this.logger.log('Creating a new schedule record');
     return this.scheduleService.create(createScheduleDto);
   }
 
@@ -59,6 +60,7 @@ export class ScheduleController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<ScheduleListResponseDto> {
+    this.logger.log('Retrieving all schedule records');
     return this.scheduleService.findAll(query);
   }
 
@@ -69,6 +71,7 @@ export class ScheduleController {
   @Get(':id')
   @ApiGlobalResponse(ScheduleResponseDto)
   findOne(@Param('id') id: string): Observable<ScheduleResponseDto> {
+    this.logger.log('Retrieving schedule record with ID: ' + id);
     return this.scheduleService.findOne(id);
   }
 
@@ -83,6 +86,7 @@ export class ScheduleController {
     @Param('programId') programId: string,
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<ScheduleListResponseDto> {
+    this.logger.log('Retrieving schedule records for program ID: ' + programId);
     return this.scheduleService.findByProgramId(programId, query);
   }
 
@@ -98,6 +102,14 @@ export class ScheduleController {
     @Param('programId') programId: string,
     @TemporalQuery() query: TemporalQueryDto,
   ): Observable<ScheduleResponseDto[]> {
+    this.logger.log(
+      'Retrieving schedule records for program ID: ' +
+        programId +
+        ' within date range from ' +
+        query.startDate +
+        ' to ' +
+        query.endDate,
+    );
     return this.scheduleService.findByProgramInDateRange(programId, query);
   }
 
@@ -113,6 +125,14 @@ export class ScheduleController {
     @Param('instructorId') instructorId: string,
     @TemporalQuery() query: TemporalQueryDto,
   ): Observable<ScheduleResponseDto[]> {
+    this.logger.log(
+      'Retrieving schedule records for instructor ID: ' +
+        instructorId +
+        ' within date range from ' +
+        query.startDate +
+        ' to ' +
+        query.endDate,
+    );
     return this.scheduleService.findByInstructorId(instructorId, query);
   }
 
@@ -127,6 +147,7 @@ export class ScheduleController {
     @Param('id') id: string,
     @Body() updateScheduleDto: UpdateScheduleDto,
   ): Observable<ScheduleResponseDto> {
+    this.logger.log('Updating schedule record with ID: ' + id);
     return this.scheduleService.update(id, updateScheduleDto);
   }
 
@@ -136,6 +157,7 @@ export class ScheduleController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting schedule record with ID: ' + id);
     return this.scheduleService.remove(id);
   }
 }

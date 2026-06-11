@@ -1,9 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import {
-  DocumentBuilder,
-  SwaggerDocumentOptions,
-  SwaggerModule,
-} from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule, } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -61,6 +57,13 @@ async function bootstrap() {
       `+ Configured client for ${rec.name}: ${configService.get<string>(rec.config.hostEnvVarName, rec.config.defaultHost)}:${configService.get<number>(rec.config.portEnvVarName, rec.config.defaultPort)}`,
     );
   });
+
+  microserviceLogger.log(
+    'Logging is set up to send logs to Seq at: ' +
+      configService.get<string>('SEQ_HOST', 'localhost') +
+      ':' +
+      configService.get<string>('SEQ_PORT', '5341'),
+  );
 }
 
 bootstrap();

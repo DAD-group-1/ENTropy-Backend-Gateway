@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('payments')
 export class PaymentController {
+  private readonly logger = new Logger(PaymentController.name);
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class PaymentController {
   create(
     @Body() createPaymentDto: CreatePaymentDto,
   ): Observable<PaymentResponseDto> {
+    this.logger.log('Creating a new payment record');
     return this.paymentService.create(createPaymentDto);
   }
 
@@ -50,6 +53,7 @@ export class PaymentController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<PaymentListResponseDto> {
+    this.logger.log('Retrieving a list of payments with pagination');
     return this.paymentService.findAll(query);
   }
 
@@ -60,6 +64,7 @@ export class PaymentController {
   @Get(':id')
   @ApiGlobalResponse(PaymentResponseDto)
   findOne(@Param('id') id: string): Observable<PaymentResponseDto> {
+    this.logger.log('Retrieving payment record with ID: ' + id);
     return this.paymentService.findOne(id);
   }
 
@@ -74,6 +79,7 @@ export class PaymentController {
     @Param('studentId') studentId: string,
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<PaymentListResponseDto> {
+    this.logger.log('Retrieving payment records for student ID: ' + studentId);
     return this.paymentService.findByStudentId(studentId, query);
   }
 
@@ -88,6 +94,7 @@ export class PaymentController {
     @Param('id') id: string,
     @Body() updatePaymentDto: UpdatePaymentDto,
   ): Observable<PaymentResponseDto> {
+    this.logger.log('Updating payment record with ID: ' + id);
     return this.paymentService.update(id, updatePaymentDto);
   }
 
@@ -97,6 +104,7 @@ export class PaymentController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting payment record with ID: ' + id);
     return this.paymentService.remove(id);
   }
 }

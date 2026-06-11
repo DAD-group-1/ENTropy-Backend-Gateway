@@ -42,6 +42,7 @@ export class StudentController {
   create(
     @Body() createStudentDto: CreateStudentDto,
   ): Observable<CreateStudentResponseDto> {
+    this.logger.log('Received request to create a new student record');
     return this.studentService.create(createStudentDto);
   }
 
@@ -54,6 +55,7 @@ export class StudentController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<StudentListResponseDto> {
+    this.logger.log('Received request to get all students with pagination');
     return this.studentService.findAll(query);
   }
 
@@ -64,6 +66,7 @@ export class StudentController {
   @Get(':id')
   @ApiGlobalResponse(StudentResponseDto)
   findOne(@Param('id') id: string): Observable<Student> {
+    this.logger.log('Received request to get student record with ID: ' + id);
     return this.studentService.findOne(id);
   }
 
@@ -78,6 +81,7 @@ export class StudentController {
     @Param('id') id: string,
     @Body() updateStudentDto: UpdateStudentDto,
   ): Observable<Student> {
+    this.logger.log('Received request to update student record with ID: ' + id);
     return this.studentService.update(id, updateStudentDto);
   }
 
@@ -87,6 +91,7 @@ export class StudentController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Received request to delete student record with ID: ' + id);
     return this.studentService.remove(id);
   }
 }

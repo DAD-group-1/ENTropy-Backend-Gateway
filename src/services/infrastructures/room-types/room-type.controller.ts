@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('room-types')
 export class RoomTypeController {
+  private readonly logger = new Logger(RoomTypeController.name);
   constructor(private readonly roomTypeService: RoomTypeService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class RoomTypeController {
   create(
     @Body() createRoomTypeDto: CreateRoomTypeRequestDto,
   ): Observable<RoomTypeResponseDto> {
+    this.logger.log('Creating a new room type record');
     return this.roomTypeService.create(createRoomTypeDto);
   }
 
@@ -50,6 +53,7 @@ export class RoomTypeController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<RoomTypeListResponseDto> {
+    this.logger.log('Retrieving all room type records with pagination');
     return this.roomTypeService.findAll(query);
   }
 
@@ -73,6 +77,7 @@ export class RoomTypeController {
     @Param('id') id: string,
     @Body() updateRoomTypeDto: UpdateRoomTypeDto,
   ): Observable<RoomTypeResponseDto> {
+    this.logger.log('Updating room type record with ID: ' + id);
     return this.roomTypeService.update(id, updateRoomTypeDto);
   }
 
@@ -82,6 +87,7 @@ export class RoomTypeController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting room type record with ID: ' + id);
     return this.roomTypeService.remove(id);
   }
 }

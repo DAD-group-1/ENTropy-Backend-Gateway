@@ -40,6 +40,7 @@ export class AttendanceController {
   create(
     @Body() createAttendanceDto: CreateAttendanceRequestDto,
   ): Observable<AttendanceResponseDto> {
+    this.logger.log('Creating a new attendance record');
     return this.attendanceService.create(createAttendanceDto);
   }
 
@@ -52,6 +53,7 @@ export class AttendanceController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<AttendanceListResponseDto> {
+    this.logger.log('Fetching all attendance records with pagination');
     return this.attendanceService.findAll(query);
   }
 
@@ -62,6 +64,7 @@ export class AttendanceController {
   @Get(':id')
   @ApiGlobalResponse(AttendanceResponseDto)
   findOne(@Param('id') id: string): Observable<AttendanceResponseDto> {
+    this.logger.log('Fetching attendance record with ID: ' + id);
     return this.attendanceService.findOne(id);
   }
 
@@ -76,6 +79,7 @@ export class AttendanceController {
     @Param('studentId') studentId: string,
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<AttendanceListResponseDto> {
+    this.logger.log('Fetching attendance records for student ID: ' + studentId);
     return this.attendanceService.findByStudentId(studentId, query);
   }
 
@@ -91,6 +95,7 @@ export class AttendanceController {
     @Param('id') id: string,
     @Body() updateAttendanceDto: UpdateAttendanceDto,
   ): Observable<AttendanceResponseDto> {
+    this.logger.log('Updating attendance record with ID: ' + id);
     return this.attendanceService.update(id, updateAttendanceDto);
   }
 
@@ -100,6 +105,7 @@ export class AttendanceController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting attendance record with ID: ' + id);
     return this.attendanceService.remove(id);
   }
 }

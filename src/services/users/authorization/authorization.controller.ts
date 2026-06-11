@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -11,18 +12,13 @@ import {
 } from '@nestjs/common';
 import { AuthorizationService } from './authorization.service';
 import {
-  AddRoleToUserDto,
   AssignRoleRequestDto,
-  AssignRolesDto,
   CreateRoleDto,
-  DeleteRoleDto,
   RoleResponseDto,
   UpdateRoleDto,
   UserResponseDto,
-  UserRoleResponseDto,
 } from '@dad-group-1/backend-common';
 import { Observable } from 'rxjs';
-import { assertObjectIsNumber } from '../../../helpers/check-utils';
 import { JwtAuthGuard } from '../../../guards/jwt.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { ApiGlobalResponse } from '../../../decorators/api.decorators';
@@ -31,6 +27,7 @@ import { ApiGlobalResponse } from '../../../decorators/api.decorators';
 @ApiBearerAuth()
 @Controller('roles')
 export class AuthorizationController {
+  private readonly logger = new Logger(AuthorizationController.name);
   constructor(private authorizationService: AuthorizationService) {}
 
   @Post()
@@ -41,6 +38,7 @@ export class AuthorizationController {
     description: 'Add a new role to the system.',
   })
   create(@Body() body: CreateRoleDto): Observable<RoleResponseDto> {
+    this.logger.log('Creating a new role record');
     return this.authorizationService.create(body);
   }
 
@@ -51,6 +49,7 @@ export class AuthorizationController {
   @Get()
   @ApiGlobalResponse(RoleResponseDto)
   findAll(): Observable<RoleResponseDto[]> {
+    this.logger.log('Retrieving all role records');
     return this.authorizationService.findAll();
   }
 
@@ -61,8 +60,8 @@ export class AuthorizationController {
   @Get(':id')
   @ApiGlobalResponse(RoleResponseDto)
   findOne(@Param('id') id: string): Observable<RoleResponseDto> {
-    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
-    return this.authorizationService.findOne(Number(id));
+    this.logger.log('Retrieving role record with ID: ' + id);
+    return this.authorizationService.findOne(id);
   }
 
   @ApiOperation({
@@ -76,8 +75,8 @@ export class AuthorizationController {
     @Param('id') id: string,
     @Body() updateRoleDto: UpdateRoleDto,
   ): Observable<RoleResponseDto> {
-    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
-    return this.authorizationService.update(Number(id), updateRoleDto);
+    this.logger.log('Updating role record with ID: ' + id);
+    return this.authorizationService.update(id, updateRoleDto);
   }
 
   @ApiOperation({
@@ -86,9 +85,8 @@ export class AuthorizationController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<unknown> {
-    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
-    const body: DeleteRoleDto = { role_id: Number(id) };
-    return this.authorizationService.remove(body);
+    this.logger.log('Deleting role record with ID: ' + id);
+    return this.authorizationService.remove(id);
   }
 }
 
@@ -96,6 +94,7 @@ export class AuthorizationController {
 @ApiBearerAuth()
 @Controller()
 export class UserRoleController {
+  private readonly logger = new Logger(UserRoleController.name);
   constructor(private authorizationService: AuthorizationService) {}
 
   /*@ApiOperation({
@@ -153,8 +152,8 @@ export class UserRoleController {
     @Param('id') id: string,
     @Body() body: { role_id: number },
   ): Observable<UserResponseDto> {
-    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
-    return this.authorizationService.assignRole(Number(id), body);
+    this.logger.log(`Assigning role ID ${body.role_id} to user ID ${id}`);
+    return this.authorizationService.assignRole(id, body);
   }
 
   /*@ApiOperation({
@@ -175,7 +174,7 @@ export class UserRoleController {
   @Get('/users/:id/role')
   @ApiGlobalResponse(RoleResponseDto)
   getUserRole(@Param('id') id: string): Observable<RoleResponseDto> {
-    assertObjectIsNumber(id, `Invalid ID: '${id}' is not a number`);
-    return this.authorizationService.getUserRole(Number(id));
+    this.logger.log(`Retrieving role for user ID ${id}`);
+    return this.authorizationService.getUserRole(id);
   }
 }

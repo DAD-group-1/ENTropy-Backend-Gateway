@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('payment-methods')
 export class PaymentMethodController {
+  private readonly logger = new Logger(PaymentMethodController.name);
   constructor(private readonly paymentMethodsService: PaymentMethodService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class PaymentMethodController {
   create(
     @Body() createPaymentMethodDto: CreatePaymentMethodDto,
   ): Observable<PaymentMethodResponseDto> {
+    this.logger.log('Creating a new payment method');
     return this.paymentMethodsService.create(createPaymentMethodDto);
   }
 
@@ -51,6 +54,7 @@ export class PaymentMethodController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<PaymentMethodListResponseDto> {
+    this.logger.log('Fetching all payment methods with pagination');
     return this.paymentMethodsService.findAll(query);
   }
 
@@ -61,6 +65,7 @@ export class PaymentMethodController {
   @Get(':id')
   @ApiGlobalResponse(PaymentMethodResponseDto)
   findOne(@Param('id') id: string): Observable<PaymentMethodResponseDto> {
+    this.logger.log('Fetching payment method with ID: ' + id);
     return this.paymentMethodsService.findOne(id);
   }
 
@@ -76,6 +81,7 @@ export class PaymentMethodController {
     @Param('id') id: string,
     @Body() updatePaymentMethodDto: UpdatePaymentMethodDto,
   ): Observable<PaymentMethodResponseDto> {
+    this.logger.log('Updating payment method with ID: ' + id);
     return this.paymentMethodsService.update(id, updatePaymentMethodDto);
   }
 
@@ -85,6 +91,7 @@ export class PaymentMethodController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting payment method with ID: ' + id);
     return this.paymentMethodsService.remove(id);
   }
 }

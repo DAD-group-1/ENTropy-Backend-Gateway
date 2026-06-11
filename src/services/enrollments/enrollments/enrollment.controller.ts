@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('enrollments')
 export class EnrollmentController {
+  private readonly logger = new Logger(EnrollmentController.name);
   constructor(private readonly enrollmentService: EnrollmentService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class EnrollmentController {
   create(
     @Body() createEnrollmentDto: CreateEnrollmentRequestDto,
   ): Observable<EnrollmentResponseDto> {
+    this.logger.log('Creating a new enrollment record');
     return this.enrollmentService.create(createEnrollmentDto);
   }
 
@@ -50,6 +53,7 @@ export class EnrollmentController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<EnrollmentListResponseDto> {
+    this.logger.log('Retrieving all enrollment records with pagination');
     return this.enrollmentService.findAll(query);
   }
 
@@ -60,6 +64,7 @@ export class EnrollmentController {
   @Get(':id')
   @ApiGlobalResponse(EnrollmentResponseDto)
   findOne(@Param('id') id: string): Observable<EnrollmentResponseDto> {
+    this.logger.log('Retrieving enrollment record with ID: ' + id);
     return this.enrollmentService.findOne(id);
   }
 
@@ -74,6 +79,7 @@ export class EnrollmentController {
     @Param('id') id: string,
     @Body() updateEnrollmentDto: UpdateEnrollmentDto,
   ): Observable<EnrollmentResponseDto> {
+    this.logger.log('Updating enrollment record with ID: ' + id);
     return this.enrollmentService.update(id, updateEnrollmentDto);
   }
 
@@ -83,6 +89,7 @@ export class EnrollmentController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting enrollment record with ID: ' + id);
     return this.enrollmentService.remove(id);
   }
 }

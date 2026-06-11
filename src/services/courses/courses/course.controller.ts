@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('courses')
 export class CourseController {
+  private readonly logger = new Logger(CourseController.name);
   constructor(private readonly courseService: CourseService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class CourseController {
   create(
     @Body() createCourseDto: CreateCourseDto,
   ): Observable<CourseResponseDto> {
+    this.logger.log('Creating a new course record');
     return this.courseService.create(createCourseDto);
   }
 
@@ -50,6 +53,7 @@ export class CourseController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<CourseListResponseDto> {
+    this.logger.log('Retrieving a list of courses with pagination');
     return this.courseService.findAll(query);
   }
 
@@ -60,6 +64,7 @@ export class CourseController {
   @Get(':id')
   @ApiGlobalResponse(CourseResponseDto)
   findOne(@Param('id') id: string): Observable<CourseResponseDto> {
+    this.logger.log('Retrieving course with ID: ' + id);
     return this.courseService.findOne(id);
   }
 
@@ -74,6 +79,7 @@ export class CourseController {
     @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
   ): Observable<CourseResponseDto> {
+    this.logger.log('Updating course with ID: ' + id);
     return this.courseService.update(id, updateCourseDto);
   }
 
@@ -83,6 +89,7 @@ export class CourseController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting course with ID: ' + id);
     return this.courseService.remove(id);
   }
 }

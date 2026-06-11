@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -26,6 +27,7 @@ import { PaginationQuery } from '../../../decorators/pagination.decorators';
 @UseGuards(JwtAuthGuard)
 @Controller('buildings')
 export class BuildingController {
+  private readonly logger = new Logger(BuildingController.name);
   constructor(private readonly buildingService: BuildingService) {}
 
   @Post()
@@ -38,6 +40,7 @@ export class BuildingController {
   create(
     @Body() createBuildingDto: CreateBuildingRequestDto,
   ): Observable<BuildingResponseDto> {
+    this.logger.log('Creating a new building record');
     return this.buildingService.create(createBuildingDto);
   }
 
@@ -50,6 +53,7 @@ export class BuildingController {
   findAll(
     @PaginationQuery() query: PaginationQueryDto,
   ): Observable<BuildingListResponseDto> {
+    this.logger.log('Retrieving all building records with pagination');
     return this.buildingService.findAll(query);
   }
 
@@ -60,6 +64,7 @@ export class BuildingController {
   @Get(':id')
   @ApiGlobalResponse(BuildingResponseDto)
   findOne(@Param('id') id: string): Observable<BuildingResponseDto> {
+    this.logger.log('Retrieving building record with ID: ' + id);
     return this.buildingService.findOne(id);
   }
 
@@ -74,6 +79,7 @@ export class BuildingController {
     @Param('id') id: string,
     @Body() updateBuildingDto: UpdateBuildingDto,
   ): Observable<BuildingResponseDto> {
+    this.logger.log('Updating building record with ID: ' + id);
     return this.buildingService.update(id, updateBuildingDto);
   }
 
@@ -83,6 +89,7 @@ export class BuildingController {
   })
   @Delete(':id')
   remove(@Param('id') id: string): Observable<void> {
+    this.logger.log('Deleting building record with ID: ' + id);
     return this.buildingService.remove(id);
   }
 }
