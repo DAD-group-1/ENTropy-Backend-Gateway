@@ -1,6 +1,7 @@
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule, RmqOptions, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DynamicModule } from '@nestjs/common';
+import { RmqUrl } from '@nestjs/microservices/external/rmq-url.interface';
 
 export class MicroserviceNetworkConfig {
   hostEnvVarName: string;
@@ -12,6 +13,10 @@ export class MicroserviceNetworkConfig {
 export const CLIENT_MODULES_CONFIG: {
   name: string;
   config: MicroserviceNetworkConfig;
+}[] = [];
+
+export const CLIENT_MODULES_RABBITMQ_CONFIG: {
+  name: string;
 }[] = [];
 
 /**
@@ -60,57 +65,69 @@ const createClientModule = (
   ]);
 };
 
+const createClientModuleRabbit = (name: string): DynamicModule => {
+  CLIENT_MODULES_RABBITMQ_CONFIG.push({ name });
+  return ClientsModule.registerAsync([
+    {
+      name: name,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        transport: Transport.RMQ,
+        options: {
+          urls: [
+            {
+              username: configService.getOrThrow<string>('RABBITMQ_USERNAME'),
+              password: configService.getOrThrow<string>('RABBITMQ_PASSWORD'),
+              hostname: configService.getOrThrow<string>('RABBITMQ_HOST'),
+              port: configService.getOrThrow<number>('RABBITMQ_PORT'),
+            } as RmqUrl,
+          ],
+          queue: `${name}_QUEUE`,
+          queueOptions: {
+            durable: true,
+          },
+        },
+      }),
+      inject: [ConfigService],
+    },
+  ]);
+};
+
 export const usersServiceClientModuleName = 'USERS_SERVICE';
-export const usersServiceClientModule: DynamicModule = createClientModule(
+export const usersServiceClientModule = createClientModuleRabbit(
   usersServiceClientModuleName,
-  { defaultPort: 3001 },
 );
 
 export const notificationsServiceClientModuleName = 'NOTIFICATIONS_SERVICE';
 export const notificationsServiceClientModule: DynamicModule =
-  createClientModule(notificationsServiceClientModuleName, {
-    defaultPort: 3010,
-  });
+  createClientModuleRabbit(notificationsServiceClientModuleName);
 
 export const attendancesServiceClientModuleName = 'ATTENDANCES_SERVICE';
-export const attendancesServiceClientModule: DynamicModule = createClientModule(
-  attendancesServiceClientModuleName,
-  { defaultPort: 3002 },
-);
+export const attendancesServiceClientModule: DynamicModule =
+  createClientModuleRabbit(attendancesServiceClientModuleName);
 
 export const billingServiceClientModuleName = 'BILLING_SERVICE';
-export const billingServiceClientModule: DynamicModule = createClientModule(
-  billingServiceClientModuleName,
-  { defaultPort: 3003 },
-);
+export const billingServiceClientModule: DynamicModule =
+  createClientModuleRabbit(billingServiceClientModuleName);
 
 export const coursesServiceClientModuleName = 'COURSES_SERVICE';
-export const coursesServiceClientModule: DynamicModule = createClientModule(
-  coursesServiceClientModuleName,
-  { defaultPort: 3004 },
-);
+export const coursesServiceClientModule: DynamicModule =
+  createClientModuleRabbit(coursesServiceClientModuleName);
 
 export const enrollmentsServiceClientModuleName = 'ENROLLMENTS_SERVICE';
-export const enrollmentsServiceClientModule: DynamicModule = createClientModule(
-  enrollmentsServiceClientModuleName,
-  { defaultPort: 3005 },
-);
+export const enrollmentsServiceClientModule: DynamicModule =
+  createClientModuleRabbit(enrollmentsServiceClientModuleName);
 
 export const infrastructuresServiceClientModuleName = 'INFRASTRUCTURES_SERVICE';
 export const infrastructuresServiceClientModule: DynamicModule =
-  createClientModule(infrastructuresServiceClientModuleName, {
-    defaultPort: 3006,
-  });
+  createClientModuleRabbit(infrastructuresServiceClientModuleName);
 
 export const schedulesServiceClientModuleName = 'SCHEDULES_SERVICE';
-export const schedulesServiceClientModule: DynamicModule = createClientModule(
-  schedulesServiceClientModuleName,
-  { defaultPort: 3007 },
-);
+export const schedulesServiceClientModule: DynamicModule =
+  createClientModuleRabbit(schedulesServiceClientModuleName);
 
 export const agentServiceClientModuleName = 'AGENT_SERVICE';
 
-export const agentServiceClientModule: DynamicModule = createClientModule(
+export const agentServiceClientModule: DynamicModule = createClientModuleRabbit(
   agentServiceClientModuleName,
-  { defaultPort: 3008 },
 );

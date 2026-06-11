@@ -1,5 +1,9 @@
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule, } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestFastifyApplication } from '@nestjs/platform-fastify';
@@ -7,7 +11,10 @@ import { HttpExceptionFilter } from './helpers/http-exception-filter';
 import { createWinstonLogger } from '@dad-group-1/backend-common';
 import { Logger } from '@nestjs/common';
 import { MessageTransformerInterceptor } from './helpers/message-interceptor';
-import { CLIENT_MODULES_CONFIG } from './helpers/client-modules';
+import {
+  CLIENT_MODULES_CONFIG,
+  CLIENT_MODULES_RABBITMQ_CONFIG,
+} from './helpers/client-modules';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, {
@@ -56,6 +63,10 @@ async function bootstrap() {
     microserviceLogger.log(
       `+ Configured client for ${rec.name}: ${configService.get<string>(rec.config.hostEnvVarName, rec.config.defaultHost)}:${configService.get<number>(rec.config.portEnvVarName, rec.config.defaultPort)}`,
     );
+  });
+
+  CLIENT_MODULES_RABBITMQ_CONFIG.forEach((rec) => {
+    microserviceLogger.log(`+ Configured client for ${rec.name}`);
   });
 
   microserviceLogger.log(
